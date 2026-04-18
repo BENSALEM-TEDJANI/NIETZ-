@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% block title %}قائمة المنتجات - NIETZ Inverter{% endblock %}
+
+{% block content %}
+<style>
+.prods-wrap {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px 60px;
+}
+
+.prods-hero {
+    text-align: center;
+    margin-bottom: 36px;
+}
+
+.prods-hero h1 {
+    font-size: 30px;
+    color: #1a1a2e;
+    margin-bottom: 10px;
+}
+
+.prods-hero p {
+    color: #777;
+    font-size: 16px;
+}
+
+/* Grid */
+.prod-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 48px;
+}
+
+.prod-card {
+    background: white;
+    border-radius: 14px;
+    padding: 22px 18px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    border: 2px solid transparent;
+    transition: border-color .2s, transform .15s, box-shadow .2s;
+    text-align: center;
+}
+
+.prod-card:hover {
+    border-color: #ff6b35;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(255,107,53,0.15);
+}
+
+.prod-icon {
+    font-size: 28px;
+    background: #fff0e8;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.prod-label {
+    font-size: 20px;
+    font-weight: 900;
+    color: #1a1a2e;
+    letter-spacing: 0.5px;
+}
+
+.prod-divider {
+    width: 40px;
+    height: 2px;
+    background: #ff6b35;
+    border-radius: 2px;
+}
+
+.prod-price {
+    font-size: 17px;
+    font-weight: 800;
+    color: #ff6b35;
+}
+
+.prod-price span {
+    font-size: 13px;
+    font-weight: 500;
+    color: #aaa;
+}
+
+/* CTA section */
+.cta-box {
+    background: linear-gradient(135deg, #1a1a2e 60%, #2d2d5e);
+    border-radius: 18px;
+    padding: 40px 30px;
+    text-align: center;
+    color: white;
+}
+
+.cta-box h2 {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.cta-box p {
+    color: #aaa;
+    font-size: 15px;
+    margin-bottom: 26px;
+}
+
+.btn-cta {
+    display: inline-block;
+    background: #ff6b35;
+    color: white;
+    text-decoration: none;
+    padding: 16px 44px;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: 700;
+    font-family: inherit;
+    transition: background .2s, transform .15s;
+}
+
+.btn-cta:hover {
+    background: #e55a25;
+    transform: translateY(-2px);
+}
+
+@media (max-width: 480px) {
+    .prod-grid { grid-template-columns: repeat(2, 1fr); }
+    .prods-hero h1 { font-size: 22px; }
+    .cta-box h2 { font-size: 20px; }
+}
+</style>
+
+<div class="prods-wrap">
+
+    <div class="prods-hero">
+        <h1>⚡ قائمة أسعار NIETZ Inverter</h1>
+        <p>اختر القدرة المناسبة لاحتياجاتك — توصيل لجميع ولايات الجزائر</p>
+    </div>
+
+    <div class="prod-grid">
+        {% for p in products %}
+        <div class="prod-card">
+            <div class="prod-icon">⚡</div>
+            <div class="prod-label">{{ p.label }}</div>
+            <div class="prod-divider"></div>
+            <div class="prod-price">
+                {{ "{:,}".format(p.price) }}<span> دج</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="cta-box">
+        <h2>🛒 هل أنت مستعد للطلب؟</h2>
+        <p>يمكنك طلب عدة قدرات في نفس الطلب — سنتصل بك في أقرب وقت</p>
+        <a href="/order" class="btn-cta">اشترِ الآن ←</a>
+    </div>
+
+</div>
+{% endblock %}

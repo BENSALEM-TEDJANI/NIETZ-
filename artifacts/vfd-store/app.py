@@ -121,6 +121,11 @@ def admin_required(f):
 def index():
     return render_template("index.html")
 
+@app.route("/products")
+def products():
+    prods = get_products()
+    return render_template("products.html", products=prods)
+
 @app.route("/order", methods=["GET", "POST"])
 def order():
     global order_counter
