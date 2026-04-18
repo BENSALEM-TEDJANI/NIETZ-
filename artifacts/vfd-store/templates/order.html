@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 
-{% block title %}طلب شراء - Inverter VFD{% endblock %}
+{% block title %}طلب شراء - NIETZ Inverter{% endblock %}
 
 {% block content %}
 <style>
     .order-wrapper {
-        max-width: 560px;
+        max-width: 580px;
         margin: 50px auto;
         padding: 0 20px 40px;
     }
@@ -21,7 +21,7 @@
     .order-card h2 {
         text-align: center;
         font-size: 26px;
-        margin-bottom: 8px;
+        margin-bottom: 6px;
         color: #1a1a2e;
     }
 
@@ -33,7 +33,7 @@
     }
 
     .form-group {
-        margin-bottom: 22px;
+        margin-bottom: 20px;
     }
 
     .form-group label {
@@ -44,9 +44,7 @@
         font-size: 15px;
     }
 
-    .form-group label span {
-        color: #ff6b35;
-    }
+    .form-group label span { color: #ff6b35; }
 
     .form-group input,
     .form-group select {
@@ -69,66 +67,72 @@
         background-color: white;
     }
 
-    .form-group input::placeholder {
-        color: #aaa;
+    .row2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    .price-box {
+        background: #fff8f5;
+        border: 2px solid #ff6b35;
+        border-radius: 10px;
+        padding: 14px 18px;
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 16px;
+    }
+
+    .price-box .label { color: #555; }
+
+    .price-box .amount {
+        font-size: 20px;
+        font-weight: 800;
+        color: #ff6b35;
     }
 
     .submit-btn {
         width: 100%;
         padding: 15px;
         font-size: 18px;
-        margin-top: 10px;
+        margin-top: 6px;
         border-radius: 10px;
     }
 
     .back-link {
         display: block;
         text-align: center;
-        margin-top: 20px;
+        margin-top: 18px;
         color: #888;
         text-decoration: none;
         font-size: 14px;
     }
 
-    .back-link:hover {
-        color: #ff6b35;
-    }
+    .back-link:hover { color: #ff6b35; }
 
     @media (max-width: 500px) {
-        .order-card {
-            padding: 28px 20px;
-        }
+        .order-card { padding: 28px 18px; }
+        .row2 { grid-template-columns: 1fr; }
     }
 </style>
 
 <div class="order-wrapper">
     <div class="order-card">
         <h2>📋 نموذج الطلب</h2>
-        <p class="subtitle">أكمل المعلومات أدناه وسنتصل بك قريباً</p>
+        <p class="subtitle">أكمل المعلومات وسنتصل بك قريباً</p>
 
-        <form method="POST" action="/order">
+        <form method="POST" action="/order" id="orderForm">
+
             <div class="form-group">
                 <label for="name">الاسم الكامل <span>*</span></label>
-                <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    placeholder=""
-                    required
-                    minlength="3"
-                >
+                <input type="text" id="name" name="name" required minlength="3">
             </div>
 
             <div class="form-group">
                 <label for="phone">رقم الهاتف <span>*</span></label>
-                <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    placeholder="مثال: 0555 123 456"
-                    required
-                    pattern="[0-9\s\+\-]{9,15}"
-                >
+                <input type="tel" id="phone" name="phone" placeholder="0555 123 456" required>
             </div>
 
             <div class="form-group">
@@ -141,14 +145,26 @@
                 </select>
             </div>
 
-            <div class="form-group">
-                <label for="power">القدرة المطلوبة (kW) <span>*</span></label>
-                <select id="power" name="power" required>
-                    <option value="" disabled selected>-- اختر القدرة --</option>
-                    {% for option in power_options %}
-                    <option value="{{ option }}">{{ option }}</option>
-                    {% endfor %}
-                </select>
+            <div class="row2">
+                <div class="form-group">
+                    <label for="power">القدرة (kW) <span>*</span></label>
+                    <select id="power" name="power" required onchange="updatePrice()">
+                        <option value="" disabled selected>-- اختر --</option>
+                        {% for opt in power_options %}
+                        <option value="{{ opt.label }}" data-price="{{ opt.price }}">{{ opt.label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="quantity">الكمية <span>*</span></label>
+                    <input type="number" id="quantity" name="quantity" value="1" min="1" max="99" onchange="updatePrice()">
+                </div>
+            </div>
+
+            <div class="price-box" id="priceBox" style="display:none;">
+                <span class="label">المجموع التقديري:</span>
+                <span class="amount" id="totalAmount">—</span>
             </div>
 
             <button type="submit" class="btn-primary submit-btn">✅ إرسال الطلب</button>
@@ -157,4 +173,21 @@
         <a href="/" class="back-link">← العودة إلى الصفحة الرئيسية</a>
     </div>
 </div>
+
+<script>
+function updatePrice() {
+    const sel = document.getElementById("power");
+    const qty = parseInt(document.getElementById("quantity").value) || 1;
+    const opt = sel.options[sel.selectedIndex];
+    if (!opt || !opt.dataset.price) {
+        document.getElementById("priceBox").style.display = "none";
+        return;
+    }
+    const unit  = parseInt(opt.dataset.price);
+    const total = unit * qty;
+    document.getElementById("totalAmount").textContent =
+        total.toLocaleString("ar-DZ") + " دج";
+    document.getElementById("priceBox").style.display = "flex";
+}
+</script>
 {% endblock %}

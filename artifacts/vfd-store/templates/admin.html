@@ -1,26 +1,26 @@
 {% extends "base.html" %}
 
-{% block title %}لوحة الإدارة - VFD Store{% endblock %}
+{% block title %}لوحة الإدارة - NIETZ{% endblock %}
 
 {% block content %}
 <style>
     .admin-wrapper {
-        max-width: 1000px;
-        margin: 40px auto;
-        padding: 0 20px 40px;
+        max-width: 1200px;
+        margin: 36px auto;
+        padding: 0 20px 50px;
     }
 
-    .admin-header {
+    .admin-top {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 28px;
         flex-wrap: wrap;
-        gap: 12px;
+        gap: 14px;
+        margin-bottom: 24px;
     }
 
-    .admin-header h2 {
-        font-size: 26px;
+    .admin-top h2 {
+        font-size: 24px;
         color: #1a1a2e;
     }
 
@@ -29,39 +29,67 @@
         color: white;
         padding: 6px 18px;
         border-radius: 20px;
-        font-size: 16px;
+        font-size: 15px;
         font-weight: 700;
     }
 
-    .empty-state {
-        background: white;
-        border-radius: 16px;
-        padding: 60px 20px;
-        text-align: center;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    .search-form {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 22px;
+    }
+
+    .search-form input {
+        flex: 1;
+        padding: 11px 16px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 15px;
+        font-family: inherit;
+        direction: rtl;
+        max-width: 300px;
+    }
+
+    .search-form input:focus {
+        outline: none;
+        border-color: #ff6b35;
+    }
+
+    .search-form button {
+        background: #1a1a2e;
+        color: white;
+        border: none;
+        padding: 11px 22px;
+        border-radius: 8px;
+        font-size: 15px;
+        cursor: pointer;
+        font-family: inherit;
+        transition: background 0.2s;
+    }
+
+    .search-form button:hover { background: #ff6b35; }
+
+    .clear-btn {
         color: #888;
+        text-decoration: none;
+        font-size: 14px;
+        padding: 11px 0;
     }
 
-    .empty-state .icon {
-        font-size: 60px;
-        margin-bottom: 16px;
-    }
+    .clear-btn:hover { color: #ff6b35; }
 
-    .empty-state p {
-        font-size: 18px;
-    }
-
-    .table-wrapper {
+    .table-wrap {
         background: white;
-        border-radius: 16px;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-        overflow: hidden;
+        border-radius: 14px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        overflow-x: auto;
     }
 
     table {
         width: 100%;
         border-collapse: collapse;
         direction: rtl;
+        min-width: 900px;
     }
 
     thead {
@@ -70,45 +98,97 @@
     }
 
     thead th {
-        padding: 16px 20px;
+        padding: 14px 14px;
         text-align: right;
-        font-size: 15px;
-        font-weight: 600;
+        font-size: 13px;
+        white-space: nowrap;
     }
 
     tbody tr {
         border-bottom: 1px solid #f0f0f0;
-        transition: background-color 0.15s;
+        transition: background 0.15s;
     }
 
-    tbody tr:hover {
-        background-color: #fff8f5;
-    }
-
-    tbody tr:last-child {
-        border-bottom: none;
-    }
+    tbody tr:hover { background: #fff8f5; }
+    tbody tr:last-child { border-bottom: none; }
 
     tbody td {
-        padding: 15px 20px;
-        font-size: 15px;
+        padding: 12px 14px;
+        font-size: 13px;
         color: #333;
+        white-space: nowrap;
+    }
+
+    .oid {
+        font-weight: 800;
+        color: #ff6b35;
+        font-size: 13px;
     }
 
     .power-badge {
         background: #fff0e8;
         color: #ff6b35;
-        padding: 4px 12px;
+        padding: 3px 10px;
         border-radius: 20px;
         font-weight: 700;
-        font-size: 14px;
-        display: inline-block;
+        font-size: 12px;
     }
 
-    .order-number {
+    .total-val {
+        font-weight: 700;
+        color: #1a1a2e;
+    }
+
+    .status-form {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+    }
+
+    .status-select {
+        padding: 5px 10px;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        font-size: 12px;
+        font-family: inherit;
+        direction: rtl;
+        cursor: pointer;
+    }
+
+    .status-select:focus { outline: none; border-color: #ff6b35; }
+
+    .save-btn {
+        background: #ff6b35;
+        color: white;
+        border: none;
+        padding: 5px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        cursor: pointer;
+        font-family: inherit;
+        white-space: nowrap;
+    }
+
+    .save-btn:hover { background: #e55a25; }
+
+    .status-pill {
+        display: inline-block;
+        padding: 3px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .s-new      { background: #e8f4fd; color: #0077cc; }
+    .s-called   { background: #fff3cd; color: #856404; }
+    .s-confirmed{ background: #d4edda; color: #155724; }
+    .s-shipped  { background: #e8d5ff; color: #6f42c1; }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
         color: #aaa;
-        font-size: 13px;
-        font-weight: 600;
+        font-size: 18px;
     }
 
     .phone-link {
@@ -117,52 +197,68 @@
         font-weight: 600;
     }
 
-    .phone-link:hover {
-        text-decoration: underline;
-    }
+    .phone-link:hover { text-decoration: underline; }
 
-    @media (max-width: 650px) {
-        thead th:nth-child(1),
-        tbody td:nth-child(1) {
-            display: none;
-        }
-
-        thead th,
-        tbody td {
-            padding: 12px 10px;
-            font-size: 13px;
-        }
+    @media (max-width: 700px) {
+        .admin-top { flex-direction: column; align-items: flex-start; }
     }
 </style>
 
 <div class="admin-wrapper">
-    <div class="admin-header">
+
+    <div class="admin-top">
         <h2>📊 لوحة إدارة الطلبات</h2>
         <span class="badge">إجمالي الطلبات: {{ orders|length }}</span>
     </div>
 
+    <form class="search-form" method="GET" action="/admin">
+        <input type="text" name="q" placeholder="ابحث برقم الطلب... (مثال: ORD-1001)"
+               value="{{ search }}" autocomplete="off">
+        <button type="submit">🔍 بحث</button>
+        {% if search %}
+        <a href="/admin" class="clear-btn">✕ إلغاء</a>
+        {% endif %}
+    </form>
+
     {% if orders %}
-    <div class="table-wrapper">
+    <div class="table-wrap">
         <table>
             <thead>
                 <tr>
-                    <th>#</th>
-                    <th>الاسم الكامل</th>
-                    <th>رقم الهاتف</th>
+                    <th>رقم الطلب</th>
+                    <th>الاسم</th>
+                    <th>الهاتف</th>
                     <th>الولاية</th>
-                    <th>القدرة المطلوبة</th>
+                    <th>القدرة</th>
+                    <th>الكمية</th>
+                    <th>السعر</th>
+                    <th>المجموع</th>
+                    <th>التاريخ</th>
+                    <th>الحالة</th>
                 </tr>
             </thead>
             <tbody>
                 {% for order in orders %}
                 <tr>
-                    <td><span class="order-number">{{ loop.index }}</span></td>
+                    <td><span class="oid">{{ order.order_id }}</span></td>
                     <td><strong>{{ order.name }}</strong></td>
-                    <td>
-                        <a href="tel:{{ order.phone }}" class="phone-link">{{ order.phone }}</a>
-                    </td>
+                    <td><a href="tel:{{ order.phone }}" class="phone-link">{{ order.phone }}</a></td>
                     <td>{{ order.wilaya }}</td>
                     <td><span class="power-badge">{{ order.power }}</span></td>
+                    <td>{{ order.quantity }}</td>
+                    <td>{{ "{:,}".format(order.unit_price) }} دج</td>
+                    <td><span class="total-val">{{ "{:,}".format(order.total) }} دج</span></td>
+                    <td>{{ order.date }}</td>
+                    <td>
+                        <form class="status-form" method="POST" action="/admin/update-status">
+                            <input type="hidden" name="order_id" value="{{ order.order_id }}">
+                            <select name="status" class="status-select" onchange="this.form.submit()">
+                                {% for s in statuses %}
+                                <option value="{{ s }}" {% if order.status == s %}selected{% endif %}>{{ s }}</option>
+                                {% endfor %}
+                            </select>
+                        </form>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -170,9 +266,13 @@
     </div>
     {% else %}
     <div class="empty-state">
-        <div class="icon">📭</div>
-        <p>لا توجد طلبات حتى الآن</p>
+        {% if search %}
+        🔍 لا توجد نتائج للبحث عن "<strong>{{ search }}</strong>"
+        {% else %}
+        📭 لا توجد طلبات حتى الآن
+        {% endif %}
     </div>
     {% endif %}
+
 </div>
 {% endblock %}
