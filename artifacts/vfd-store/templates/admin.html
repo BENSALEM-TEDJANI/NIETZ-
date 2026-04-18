@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block title %}لوحة الإدارة - VFD Store{% endblock %}
+
+{% block content %}
+<style>
+    .admin-wrapper {
+        max-width: 1000px;
+        margin: 40px auto;
+        padding: 0 20px 40px;
+    }
+
+    .admin-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 28px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .admin-header h2 {
+        font-size: 26px;
+        color: #1a1a2e;
+    }
+
+    .badge {
+        background: #ff6b35;
+        color: white;
+        padding: 6px 18px;
+        border-radius: 20px;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .empty-state {
+        background: white;
+        border-radius: 16px;
+        padding: 60px 20px;
+        text-align: center;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        color: #888;
+    }
+
+    .empty-state .icon {
+        font-size: 60px;
+        margin-bottom: 16px;
+    }
+
+    .empty-state p {
+        font-size: 18px;
+    }
+
+    .table-wrapper {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        direction: rtl;
+    }
+
+    thead {
+        background: #1a1a2e;
+        color: white;
+    }
+
+    thead th {
+        padding: 16px 20px;
+        text-align: right;
+        font-size: 15px;
+        font-weight: 600;
+    }
+
+    tbody tr {
+        border-bottom: 1px solid #f0f0f0;
+        transition: background-color 0.15s;
+    }
+
+    tbody tr:hover {
+        background-color: #fff8f5;
+    }
+
+    tbody tr:last-child {
+        border-bottom: none;
+    }
+
+    tbody td {
+        padding: 15px 20px;
+        font-size: 15px;
+        color: #333;
+    }
+
+    .power-badge {
+        background: #fff0e8;
+        color: #ff6b35;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 14px;
+        display: inline-block;
+    }
+
+    .order-number {
+        color: #aaa;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .phone-link {
+        color: #0066cc;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .phone-link:hover {
+        text-decoration: underline;
+    }
+
+    @media (max-width: 650px) {
+        thead th:nth-child(1),
+        tbody td:nth-child(1) {
+            display: none;
+        }
+
+        thead th,
+        tbody td {
+            padding: 12px 10px;
+            font-size: 13px;
+        }
+    }
+</style>
+
+<div class="admin-wrapper">
+    <div class="admin-header">
+        <h2>📊 لوحة إدارة الطلبات</h2>
+        <span class="badge">إجمالي الطلبات: {{ orders|length }}</span>
+    </div>
+
+    {% if orders %}
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>الاسم الكامل</th>
+                    <th>رقم الهاتف</th>
+                    <th>الولاية</th>
+                    <th>القدرة المطلوبة</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td><span class="order-number">{{ loop.index }}</span></td>
+                    <td><strong>{{ order.name }}</strong></td>
+                    <td>
+                        <a href="tel:{{ order.phone }}" class="phone-link">{{ order.phone }}</a>
+                    </td>
+                    <td>{{ order.wilaya }}</td>
+                    <td><span class="power-badge">{{ order.power }}</span></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="icon">📭</div>
+        <p>لا توجد طلبات حتى الآن</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

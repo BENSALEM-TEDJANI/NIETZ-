@@ -1,0 +1,16 @@
+kind = "web"
+previewPath = "/"
+title = "VFD Store"
+version = "1.0.0"
+id = "vfd-store-001"
+
+[[services]]
+localPort = 3000
+name = "VFD Store"
+paths = ["/"]
+
+[services.env]
+PORT = "3000"
+
+[services.development]
+run = "cd artifacts/vfd-store && PORT=3000 python app.py"
