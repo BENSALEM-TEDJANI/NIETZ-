@@ -1,0 +1,258 @@
+{% extends "base.html" %}
+
+{% block title %}إدارة المستخدمين - NIETZ{% endblock %}
+
+{% block content %}
+<style>
+    .uw { max-width: 900px; margin: 36px auto; padding: 0 20px 60px; }
+
+    .page-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 26px;
+    }
+
+    .page-top h2 { font-size: 24px; color: #1a1a2e; }
+
+    /* Add user form ──────────────────────────────── */
+    .add-card {
+        background: white;
+        border-radius: 14px;
+        padding: 28px 30px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+        margin-bottom: 28px;
+        border-right: 4px solid #ff6b35;
+    }
+
+    .add-card h3 { font-size: 17px; color: #1a1a2e; margin-bottom: 18px; }
+
+    .add-form {
+        display: grid;
+        grid-template-columns: 1fr 1fr 150px 140px;
+        gap: 12px;
+        align-items: end;
+    }
+
+    .add-form .fg { display: flex; flex-direction: column; gap: 6px; }
+    .add-form .fg label { font-size: 13px; font-weight: 600; color: #555; }
+
+    .add-form input,
+    .add-form select {
+        padding: 10px 12px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 14px;
+        font-family: inherit;
+        direction: rtl;
+        transition: border-color 0.2s;
+    }
+
+    .add-form input:focus,
+    .add-form select:focus {
+        outline: none;
+        border-color: #ff6b35;
+    }
+
+    .btn-add {
+        background: #ff6b35;
+        color: white;
+        border: none;
+        padding: 11px 20px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-family: inherit;
+        font-weight: 700;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: background 0.2s;
+    }
+
+    .btn-add:hover { background: #e55a25; }
+
+    /* Users table ────────────────────────────────── */
+    .table-wrap {
+        background: white;
+        border-radius: 14px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+        overflow: hidden;
+    }
+
+    table { width: 100%; border-collapse: collapse; direction: rtl; }
+
+    thead { background: #1a1a2e; color: white; }
+    thead th { padding: 14px 18px; text-align: right; font-size: 14px; }
+
+    tbody tr { border-bottom: 1px solid #f0f0f0; transition: background 0.15s; }
+    tbody tr:hover { background: #fff8f5; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody td { padding: 14px 18px; font-size: 14px; }
+
+    .uid { color: #aaa; font-size: 13px; }
+    .uname-cell { font-weight: 700; color: #1a1a2e; }
+
+    .role-badge {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        display: inline-block;
+    }
+
+    .role-admin    { background: #fff0e8; color: #ff6b35; }
+    .role-employee { background: #e8f0ff; color: #0055cc; }
+
+    /* Edit form inline */
+    .edit-form {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .edit-form select,
+    .edit-form input[type="password"] {
+        padding: 7px 10px;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        font-size: 13px;
+        font-family: inherit;
+        direction: rtl;
+    }
+
+    .edit-form select:focus,
+    .edit-form input[type="password"]:focus {
+        outline: none;
+        border-color: #ff6b35;
+    }
+
+    .edit-form input[type="password"] { width: 130px; }
+
+    .btn-save {
+        background: #1a1a2e;
+        color: white;
+        border: none;
+        padding: 7px 14px;
+        border-radius: 6px;
+        font-size: 12px;
+        cursor: pointer;
+        font-family: inherit;
+        transition: background 0.2s;
+    }
+
+    .btn-save:hover { background: #ff6b35; }
+
+    .btn-delete {
+        background: #fef2f2;
+        color: #dc2626;
+        border: 2px solid #fca5a5;
+        padding: 7px 14px;
+        border-radius: 6px;
+        font-size: 12px;
+        cursor: pointer;
+        font-family: inherit;
+        transition: background 0.2s;
+    }
+
+    .btn-delete:hover { background: #fee2e2; }
+
+    .you-tag {
+        font-size: 11px;
+        background: #e8f5e9;
+        color: #2e7d32;
+        padding: 2px 8px;
+        border-radius: 20px;
+        margin-right: 6px;
+    }
+
+    @media (max-width: 700px) {
+        .add-form { grid-template-columns: 1fr 1fr; }
+        .add-form .btn-add { grid-column: span 2; }
+    }
+</style>
+
+<div class="uw">
+    <div class="page-top">
+        <h2>👥 إدارة المستخدمين</h2>
+        <a href="/admin" style="color:#888;text-decoration:none;font-size:14px;">← العودة للطلبات</a>
+    </div>
+
+    <!-- Add user -->
+    <div class="add-card">
+        <h3>➕ إضافة مستخدم جديد</h3>
+        <form class="add-form" method="POST" action="/admin/users/add">
+            <div class="fg">
+                <label>اسم المستخدم</label>
+                <input type="text" name="username" placeholder="username" required>
+            </div>
+            <div class="fg">
+                <label>كلمة المرور</label>
+                <input type="password" name="password" placeholder="••••••••" required>
+            </div>
+            <div class="fg">
+                <label>الصلاحية</label>
+                <select name="role">
+                    <option value="employee">موظف</option>
+                    <option value="admin">مدير</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-add">✅ إضافة</button>
+        </form>
+    </div>
+
+    <!-- Users table -->
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>اسم المستخدم</th>
+                    <th>الصلاحية</th>
+                    <th>تعديل</th>
+                    <th>حذف</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td><span class="uid">{{ user.id }}</span></td>
+                    <td>
+                        <span class="uname-cell">{{ user.username }}</span>
+                        {% if user.id == session.get('user_id') %}
+                        <span class="you-tag">أنت</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="role-badge role-{{ user.role }}">
+                            {{ 'مدير' if user.role == 'admin' else 'موظف' }}
+                        </span>
+                    </td>
+                    <td>
+                        <form class="edit-form" method="POST" action="/admin/users/edit/{{ user.id }}">
+                            <select name="role">
+                                <option value="admin"    {% if user.role == 'admin' %}selected{% endif %}>مدير</option>
+                                <option value="employee" {% if user.role == 'employee' %}selected{% endif %}>موظف</option>
+                            </select>
+                            <input type="password" name="password" placeholder="كلمة مرور جديدة">
+                            <button type="submit" class="btn-save">💾 حفظ</button>
+                        </form>
+                    </td>
+                    <td>
+                        {% if user.id != session.get('user_id') %}
+                        <form method="POST" action="/admin/users/delete/{{ user.id }}"
+                              onsubmit="return confirm('هل أنت متأكد من حذف هذا المستخدم؟')">
+                            <button type="submit" class="btn-delete">🗑 حذف</button>
+                        </form>
+                        {% else %}
+                        <span style="color:#ccc;font-size:12px;">—</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
