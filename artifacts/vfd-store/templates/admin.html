@@ -19,10 +19,7 @@
         margin-bottom: 24px;
     }
 
-    .admin-top h2 {
-        font-size: 24px;
-        color: #1a1a2e;
-    }
+    .admin-top h2 { font-size: 24px; color: #1a1a2e; }
 
     .badge {
         background: #ff6b35;
@@ -50,10 +47,7 @@
         max-width: 300px;
     }
 
-    .search-form input:focus {
-        outline: none;
-        border-color: #ff6b35;
-    }
+    .search-form input:focus { outline: none; border-color: #ff6b35; }
 
     .search-form button {
         background: #1a1a2e;
@@ -68,14 +62,7 @@
     }
 
     .search-form button:hover { background: #ff6b35; }
-
-    .clear-btn {
-        color: #888;
-        text-decoration: none;
-        font-size: 14px;
-        padding: 11px 0;
-    }
-
+    .clear-btn { color: #888; text-decoration: none; font-size: 14px; padding: 11px 0; }
     .clear-btn:hover { color: #ff6b35; }
 
     .table-wrap {
@@ -89,64 +76,72 @@
         width: 100%;
         border-collapse: collapse;
         direction: rtl;
-        min-width: 900px;
+        min-width: 800px;
     }
 
-    thead {
-        background: #1a1a2e;
-        color: white;
-    }
+    thead { background: #1a1a2e; color: white; }
 
     thead th {
-        padding: 14px 14px;
+        padding: 14px 16px;
         text-align: right;
         font-size: 13px;
         white-space: nowrap;
     }
 
-    tbody tr {
-        border-bottom: 1px solid #f0f0f0;
-        transition: background 0.15s;
-    }
-
+    tbody tr { border-bottom: 1px solid #f0f0f0; transition: background 0.15s; }
     tbody tr:hover { background: #fff8f5; }
     tbody tr:last-child { border-bottom: none; }
 
     tbody td {
-        padding: 12px 14px;
+        padding: 13px 16px;
         font-size: 13px;
         color: #333;
-        white-space: nowrap;
+        vertical-align: top;
     }
 
-    .oid {
-        font-weight: 800;
-        color: #ff6b35;
-        font-size: 13px;
+    .oid { font-weight: 800; color: #ff6b35; font-size: 13px; }
+
+    /* Items list inside cell */
+    .items-list { list-style: none; padding: 0; margin: 0; }
+
+    .items-list li {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 3px 0;
+        font-size: 12px;
+        color: #333;
+        border-bottom: 1px dashed #f0f0f0;
     }
 
-    .power-badge {
+    .items-list li:last-child { border-bottom: none; }
+
+    .power-pill {
         background: #fff0e8;
         color: #ff6b35;
-        padding: 3px 10px;
+        padding: 2px 9px;
         border-radius: 20px;
         font-weight: 700;
         font-size: 12px;
+        white-space: nowrap;
     }
 
-    .total-val {
-        font-weight: 700;
-        color: #1a1a2e;
+    .qty-tag {
+        background: #f0f0f0;
+        color: #555;
+        padding: 2px 7px;
+        border-radius: 5px;
+        font-size: 11px;
     }
 
-    .status-form {
-        display: flex;
-        gap: 6px;
-        align-items: center;
-    }
+    .subtotal-tag { color: #aaa; font-size: 11px; }
+
+    .total-val { font-weight: 800; color: #1a1a2e; font-size: 14px; }
+
+    .status-form { display: flex; gap: 6px; align-items: center; }
 
     .status-select {
-        padding: 5px 10px;
+        padding: 5px 8px;
         border: 2px solid #e0e0e0;
         border-radius: 6px;
         font-size: 12px;
@@ -157,52 +152,10 @@
 
     .status-select:focus { outline: none; border-color: #ff6b35; }
 
-    .save-btn {
-        background: #ff6b35;
-        color: white;
-        border: none;
-        padding: 5px 12px;
-        border-radius: 6px;
-        font-size: 12px;
-        cursor: pointer;
-        font-family: inherit;
-        white-space: nowrap;
-    }
-
-    .save-btn:hover { background: #e55a25; }
-
-    .status-pill {
-        display: inline-block;
-        padding: 3px 10px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 700;
-    }
-
-    .s-new      { background: #e8f4fd; color: #0077cc; }
-    .s-called   { background: #fff3cd; color: #856404; }
-    .s-confirmed{ background: #d4edda; color: #155724; }
-    .s-shipped  { background: #e8d5ff; color: #6f42c1; }
-    .s-received { background: #d4edda; color: #155724; }
-
-    .empty-state {
-        text-align: center;
-        padding: 60px 20px;
-        color: #aaa;
-        font-size: 18px;
-    }
-
-    .phone-link {
-        color: #0066cc;
-        text-decoration: none;
-        font-weight: 600;
-    }
-
+    .phone-link { color: #0066cc; text-decoration: none; font-weight: 600; }
     .phone-link:hover { text-decoration: underline; }
 
-    @media (max-width: 700px) {
-        .admin-top { flex-direction: column; align-items: flex-start; }
-    }
+    .empty-state { text-align: center; padding: 60px 20px; color: #aaa; font-size: 18px; }
 </style>
 
 <div class="admin-wrapper">
@@ -230,9 +183,7 @@
                     <th>الاسم</th>
                     <th>الهاتف</th>
                     <th>الولاية</th>
-                    <th>القدرة</th>
-                    <th>الكمية</th>
-                    <th>السعر</th>
+                    <th>المنتجات</th>
                     <th>المجموع</th>
                     <th>التاريخ</th>
                     <th>الحالة</th>
@@ -245,11 +196,24 @@
                     <td><strong>{{ order.name }}</strong></td>
                     <td><a href="tel:{{ order.phone }}" class="phone-link">{{ order.phone }}</a></td>
                     <td>{{ order.wilaya }}</td>
-                    <td><span class="power-badge">{{ order.power }}</span></td>
-                    <td>{{ order.quantity }}</td>
-                    <td>{{ "{:,}".format(order.unit_price) }} دج</td>
+                    <td>
+                        {% if order.items is defined %}
+                        <ul class="items-list">
+                            {% for item in order.items %}
+                            <li>
+                                <span class="power-pill">{{ item.power }}</span>
+                                <span class="qty-tag">× {{ item.quantity }}</span>
+                                <span class="subtotal-tag">{{ "{:,}".format(item.subtotal) }} دج</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        {% else %}
+                        <span class="power-pill">{{ order.power }}</span>
+                        <span class="qty-tag">× {{ order.quantity }}</span>
+                        {% endif %}
+                    </td>
                     <td><span class="total-val">{{ "{:,}".format(order.total) }} دج</span></td>
-                    <td>{{ order.date }}</td>
+                    <td style="white-space:nowrap;">{{ order.date }}</td>
                     <td>
                         <form class="status-form" method="POST" action="/admin/update-status">
                             <input type="hidden" name="order_id" value="{{ order.order_id }}">

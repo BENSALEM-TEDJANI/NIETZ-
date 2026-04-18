@@ -5,43 +5,41 @@
 {% block content %}
 <style>
     .order-wrapper {
-        max-width: 580px;
-        margin: 50px auto;
-        padding: 0 20px 40px;
+        max-width: 620px;
+        margin: 44px auto;
+        padding: 0 20px 50px;
     }
 
     .order-card {
         background: white;
         border-radius: 16px;
-        padding: 40px 36px;
+        padding: 36px 34px;
         box-shadow: 0 8px 32px rgba(0,0,0,0.1);
         border-top: 5px solid #ff6b35;
     }
 
     .order-card h2 {
         text-align: center;
-        font-size: 26px;
+        font-size: 24px;
         margin-bottom: 6px;
         color: #1a1a2e;
     }
 
-    .order-card .subtitle {
+    .subtitle {
         text-align: center;
         color: #888;
-        margin-bottom: 32px;
-        font-size: 15px;
+        margin-bottom: 28px;
+        font-size: 14px;
     }
 
-    .form-group {
-        margin-bottom: 20px;
-    }
+    .form-group { margin-bottom: 18px; }
 
     .form-group label {
         display: block;
-        margin-bottom: 8px;
+        margin-bottom: 7px;
         font-weight: 600;
         color: #333;
-        font-size: 15px;
+        font-size: 14px;
     }
 
     .form-group label span { color: #ff6b35; }
@@ -49,31 +47,111 @@
     .form-group input,
     .form-group select {
         width: 100%;
-        padding: 12px 16px;
+        padding: 11px 14px;
         border: 2px solid #e0e0e0;
         border-radius: 8px;
-        font-size: 16px;
+        font-size: 15px;
         font-family: inherit;
         color: #333;
-        transition: border-color 0.2s;
         direction: rtl;
-        background-color: #fafafa;
+        background: #fafafa;
+        transition: border-color 0.2s;
     }
 
     .form-group input:focus,
     .form-group select:focus {
         outline: none;
         border-color: #ff6b35;
-        background-color: white;
+        background: white;
     }
 
-    .row2 {
+    /* ── Cart section ── */
+    .cart-label {
+        font-size: 15px;
+        font-weight: 700;
+        color: #1a1a2e;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .cart-items { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+
+    .cart-row {
         display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 16px;
+        grid-template-columns: 1fr 100px 40px;
+        gap: 10px;
+        align-items: center;
+        background: #fafafa;
+        border: 2px solid #e8e8e8;
+        border-radius: 10px;
+        padding: 12px 14px;
+        transition: border-color 0.2s;
     }
 
-    .price-box {
+    .cart-row:hover { border-color: #ff6b35; }
+
+    .cart-row select,
+    .cart-row input[type="number"] {
+        border: 2px solid #e0e0e0;
+        border-radius: 7px;
+        padding: 9px 10px;
+        font-size: 14px;
+        font-family: inherit;
+        direction: rtl;
+        background: white;
+        width: 100%;
+        transition: border-color 0.2s;
+    }
+
+    .cart-row select:focus,
+    .cart-row input[type="number"]:focus {
+        outline: none;
+        border-color: #ff6b35;
+    }
+
+    .delete-btn {
+        background: #fef2f2;
+        border: 2px solid #fca5a5;
+        color: #dc2626;
+        border-radius: 7px;
+        width: 36px;
+        height: 36px;
+        cursor: pointer;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+        flex-shrink: 0;
+    }
+
+    .delete-btn:hover { background: #fee2e2; }
+
+    .add-row-btn {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #f0f9ff;
+        border: 2px dashed #93c5fd;
+        color: #0077cc;
+        border-radius: 10px;
+        padding: 11px 18px;
+        font-size: 14px;
+        font-family: inherit;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        justify-content: center;
+        transition: background 0.2s, border-color 0.2s;
+        margin-bottom: 18px;
+    }
+
+    .add-row-btn:hover { background: #e0f2fe; border-color: #3b82f6; }
+
+    /* ── Total ── */
+    .total-box {
         background: #fff8f5;
         border: 2px solid #ff6b35;
         border-radius: 10px;
@@ -82,46 +160,45 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        font-size: 16px;
     }
 
-    .price-box .label { color: #555; }
-
-    .price-box .amount {
-        font-size: 20px;
-        font-weight: 800;
-        color: #ff6b35;
-    }
+    .total-box .tl { color: #555; font-size: 15px; font-weight: 600; }
+    .total-box .ta { font-size: 22px; font-weight: 900; color: #ff6b35; }
 
     .submit-btn {
         width: 100%;
         padding: 15px;
-        font-size: 18px;
-        margin-top: 6px;
+        font-size: 17px;
         border-radius: 10px;
     }
 
     .back-link {
         display: block;
         text-align: center;
-        margin-top: 18px;
-        color: #888;
+        margin-top: 16px;
+        color: #aaa;
         text-decoration: none;
-        font-size: 14px;
+        font-size: 13px;
     }
 
     .back-link:hover { color: #ff6b35; }
 
-    @media (max-width: 500px) {
-        .order-card { padding: 28px 18px; }
-        .row2 { grid-template-columns: 1fr; }
+    .row-subtitle {
+        font-size: 12px;
+        color: #aaa;
+        margin-top: 3px;
+    }
+
+    @media (max-width: 480px) {
+        .order-card { padding: 24px 16px; }
+        .cart-row { grid-template-columns: 1fr 80px 36px; }
     }
 </style>
 
 <div class="order-wrapper">
     <div class="order-card">
-        <h2>📋 نموذج الطلب</h2>
-        <p class="subtitle">أكمل المعلومات وسنتصل بك قريباً</p>
+        <h2>🛒 نموذج الطلب</h2>
+        <p class="subtitle">اختر القدرات المطلوبة وسنتصل بك قريباً</p>
 
         <form method="POST" action="/order" id="orderForm">
 
@@ -139,35 +216,30 @@
                 <label for="wilaya">الولاية <span>*</span></label>
                 <select id="wilaya" name="wilaya" required>
                     <option value="" disabled selected>-- اختر ولايتك --</option>
-                    {% for wilaya in wilayas %}
-                    <option value="{{ wilaya }}">{{ wilaya }}</option>
+                    {% for w in wilayas %}
+                    <option value="{{ w }}">{{ w }}</option>
                     {% endfor %}
                 </select>
             </div>
 
-            <div class="row2">
-                <div class="form-group">
-                    <label for="power">القدرة (kW) <span>*</span></label>
-                    <select id="power" name="power" required onchange="updatePrice()">
-                        <option value="" disabled selected>-- اختر --</option>
-                        {% for opt in power_options %}
-                        <option value="{{ opt.label }}" data-price="{{ opt.price }}">{{ opt.label }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
+            <div class="cart-label">⚡ القدرات المطلوبة <span style="color:#aaa;font-weight:400;font-size:13px;">— أضف كل قدرة تريدها</span></div>
 
-                <div class="form-group">
-                    <label for="quantity">الكمية <span>*</span></label>
-                    <input type="number" id="quantity" name="quantity" value="1" min="1" max="99" onchange="updatePrice()">
-                </div>
+            <div class="cart-items" id="cartItems">
+                <!-- first row injected by JS -->
             </div>
 
-            <div class="price-box" id="priceBox" style="display:none;">
-                <span class="label">المجموع التقديري:</span>
-                <span class="amount" id="totalAmount">—</span>
+            <button type="button" class="add-row-btn" onclick="addRow()">
+                ➕ إضافة قدرة أخرى
+            </button>
+
+            <div class="total-box">
+                <span class="tl">المجموع الإجمالي:</span>
+                <span class="ta" id="grandTotal">—</span>
             </div>
 
-            <button type="submit" class="btn-primary submit-btn">✅ إرسال الطلب</button>
+            <button type="submit" class="btn-primary submit-btn" onclick="return validateCart()">
+                ✅ إرسال الطلب
+            </button>
         </form>
 
         <a href="/" class="back-link">← العودة إلى الصفحة الرئيسية</a>
@@ -175,19 +247,85 @@
 </div>
 
 <script>
-function updatePrice() {
-    const sel = document.getElementById("power");
-    const qty = parseInt(document.getElementById("quantity").value) || 1;
-    const opt = sel.options[sel.selectedIndex];
-    if (!opt || !opt.dataset.price) {
-        document.getElementById("priceBox").style.display = "none";
-        return;
+const PRICES = {
+    {% for opt in power_options %}
+    "{{ opt.label }}": {{ opt.price }},
+    {% endfor %}
+};
+
+const OPTIONS_HTML = `
+    <option value="" disabled selected>-- اختر القدرة --</option>
+    {% for opt in power_options %}
+    <option value="{{ opt.label }}">{{ opt.label }}</option>
+    {% endfor %}
+`;
+
+function addRow(power = "", qty = 1) {
+    const row = document.createElement("div");
+    row.className = "cart-row";
+    row.innerHTML = `
+        <div>
+            <select name="power[]" onchange="recalc()" required>
+                ${OPTIONS_HTML}
+            </select>
+            <div class="row-subtitle" id="sub_${Date.now()}"></div>
+        </div>
+        <input type="number" name="qty[]" value="${qty}" min="1" max="99" onchange="recalc()">
+        <button type="button" class="delete-btn" onclick="removeRow(this)" title="حذف">✕</button>
+    `;
+    document.getElementById("cartItems").appendChild(row);
+    if (power) {
+        row.querySelector("select").value = power;
     }
-    const unit  = parseInt(opt.dataset.price);
-    const total = unit * qty;
-    document.getElementById("totalAmount").textContent =
-        total.toLocaleString("ar-DZ") + " دج";
-    document.getElementById("priceBox").style.display = "flex";
+    recalc();
 }
+
+function removeRow(btn) {
+    const rows = document.querySelectorAll(".cart-row");
+    if (rows.length <= 1) return;
+    btn.closest(".cart-row").remove();
+    recalc();
+}
+
+function recalc() {
+    const rows   = document.querySelectorAll(".cart-row");
+    let grand    = 0;
+    let hasItem  = false;
+
+    rows.forEach(row => {
+        const sel   = row.querySelector("select");
+        const qtyEl = row.querySelector("input[type='number']");
+        const sub   = row.querySelector("[id^='sub_']") || row.querySelector(".row-subtitle");
+        const pw    = sel ? sel.value : "";
+        const qty   = qtyEl ? parseInt(qtyEl.value) || 1 : 1;
+
+        if (pw && PRICES[pw]) {
+            const st = PRICES[pw] * qty;
+            grand   += st;
+            hasItem  = true;
+            if (sub) sub.textContent = `${PRICES[pw].toLocaleString("ar-DZ")} دج × ${qty} = ${st.toLocaleString("ar-DZ")} دج`;
+        } else {
+            if (sub) sub.textContent = "";
+        }
+    });
+
+    document.getElementById("grandTotal").textContent =
+        hasItem ? grand.toLocaleString("ar-DZ") + " دج" : "—";
+}
+
+function validateCart() {
+    const sels = document.querySelectorAll(".cart-row select");
+    for (const s of sels) {
+        if (!s.value) {
+            s.focus();
+            alert("يرجى اختيار القدرة لكل عنصر في السلة");
+            return false;
+        }
+    }
+    return true;
+}
+
+// Start with one empty row
+addRow();
 </script>
 {% endblock %}

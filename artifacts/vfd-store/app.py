@@ -101,34 +101,49 @@ def index():
 def order():
     global order_counter
     if request.method == "POST":
-        name     = request.form.get("name", "").strip()
-        phone    = request.form.get("phone", "").strip()
-        wilaya   = request.form.get("wilaya", "").strip()
-        power    = request.form.get("power", "").strip()
-        quantity = request.form.get("quantity", "1").strip()
+        name   = request.form.get("name", "").strip()
+        phone  = request.form.get("phone", "").strip()
+        wilaya = request.form.get("wilaya", "").strip()
 
-        if name and phone and wilaya and power:
-            try:
-                qty = max(1, int(quantity))
-            except ValueError:
-                qty = 1
-            unit_price = PRICE_MAP.get(power, 0)
-            total      = unit_price * qty
-            order_id   = f"ORD-{order_counter}"
-            order_counter += 1
-            orders.append({
-                "order_id":   order_id,
-                "name":       name,
-                "phone":      phone,
-                "wilaya":     wilaya,
-                "power":      power,
-                "quantity":   qty,
-                "unit_price": unit_price,
-                "total":      total,
-                "date":       datetime.now().strftime("%Y-%m-%d %H:%M"),
-                "status":     "جديد",
-            })
-            return redirect(url_for("success", oid=order_id))
+        powers     = request.form.getlist("power[]")
+        quantities = request.form.getlist("qty[]")
+
+        if name and phone and wilaya and powers:
+            items = []
+            total = 0
+            for pw, qt in zip(powers, quantities):
+                pw = pw.strip()
+                if not pw:
+                    continue
+                try:
+                    qty = max(1, int(qt))
+                except ValueError:
+                    qty = 1
+                unit_price = PRICE_MAP.get(pw, 0)
+                subtotal   = unit_price * qty
+                total     += subtotal
+                items.append({
+                    "power":      pw,
+                    "quantity":   qty,
+                    "unit_price": unit_price,
+                    "subtotal":   subtotal,
+                })
+
+            if items:
+                order_id = f"ORD-{order_counter}"
+                order_counter += 1
+                orders.append({
+                    "order_id": order_id,
+                    "name":     name,
+                    "phone":    phone,
+                    "wilaya":   wilaya,
+                    "items":    items,
+                    "total":    total,
+                    "date":     datetime.now().strftime("%Y-%m-%d %H:%M"),
+                    "status":   "جديد",
+                })
+                return redirect(url_for("success", oid=order_id))
+
     return render_template("order.html", power_options=POWER_OPTIONS, wilayas=WILAYAS)
 
 @app.route("/success")
