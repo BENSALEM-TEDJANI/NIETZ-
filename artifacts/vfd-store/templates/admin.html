@@ -197,19 +197,21 @@
                     <td><a href="tel:{{ order.phone }}" class="phone-link">{{ order.phone }}</a></td>
                     <td>{{ order.wilaya }}</td>
                     <td>
-                        {% if 'items' in order %}
+                        {% if order.products %}
                         <ul class="items-list">
-                            {% for item in order['items'] %}
+                            {% for p in order.products %}
                             <li>
-                                <span class="power-pill">{{ item.power }}</span>
-                                <span class="qty-tag">× {{ item.quantity }}</span>
-                                <span class="subtotal-tag">{{ "{:,}".format(item.subtotal) }} دج</span>
+                                <span class="power-pill">{{ p.power }}</span>
+                                <span class="qty-tag">× {{ p.quantity }}</span>
+                                <span class="subtotal-tag">{{ "{:,}".format(p.subtotal) }} دج</span>
                             </li>
                             {% endfor %}
                         </ul>
-                        {% else %}
+                        {% elif order.power %}
                         <span class="power-pill">{{ order.power }}</span>
                         <span class="qty-tag">× {{ order.quantity }}</span>
+                        {% else %}
+                        <span style="color:#aaa;">—</span>
                         {% endif %}
                     </td>
                     <td><span class="total-val">{{ "{:,}".format(order.total) }} دج</span></td>

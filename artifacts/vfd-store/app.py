@@ -137,7 +137,7 @@ def order():
                     "name":     name,
                     "phone":    phone,
                     "wilaya":   wilaya,
-                    "items":    items,
+                    "products": items,
                     "total":    total,
                     "date":     datetime.now().strftime("%Y-%m-%d %H:%M"),
                     "status":   "جديد",
