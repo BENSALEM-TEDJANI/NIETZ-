@@ -1,181 +1,273 @@
 {% extends "base.html" %}
-
-{% block title %}لوحة الإدارة - NIETZ{% endblock %}
+{% block title %}لوحة الطلبات - NIETZ{% endblock %}
 
 {% block content %}
 <style>
-    .admin-wrapper {
-        max-width: 1200px;
-        margin: 36px auto;
-        padding: 0 20px 50px;
-    }
+/* ── Layout ── */
+.dash { max-width: 1300px; margin: 0 auto; padding: 28px 20px 60px; }
 
-    .admin-top {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 14px;
-        margin-bottom: 24px;
-    }
+/* ── Stat cards ── */
+.stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px; margin-bottom: 24px; }
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 16px 18px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    border-right: 4px solid #e0e0e0;
+    cursor: pointer;
+    transition: transform .15s, box-shadow .15s;
+    text-decoration: none;
+    color: inherit;
+}
+.stat-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,0.1); }
+.stat-card.active { border-right-color: #ff6b35; background: #fff8f5; }
+.stat-card .sc-label { font-size: 12px; color: #888; }
+.stat-card .sc-val { font-size: 26px; font-weight: 900; color: #1a1a2e; }
+.stat-card.s-new    { border-right-color: #3b82f6; }
+.stat-card.s-new .sc-val { color: #3b82f6; }
+.stat-card.s-done   { border-right-color: #10b981; }
+.stat-card.s-done .sc-val { color: #10b981; }
+.stat-card.s-ship   { border-right-color: #8b5cf6; }
+.stat-card.s-ship .sc-val { color: #8b5cf6; }
+.stat-card.s-old    { border-right-color: #f59e0b; }
+.stat-card.s-old .sc-val { color: #f59e0b; }
 
-    .admin-top h2 { font-size: 24px; color: #1a1a2e; }
+/* ── Toolbar ── */
+.toolbar {
+    background: white;
+    border-radius: 12px;
+    padding: 16px 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+    margin-bottom: 18px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+}
+.search-wrap { display: flex; gap: 8px; flex: 1; min-width: 220px; }
+.search-wrap input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    direction: rtl;
+    transition: border-color .2s;
+}
+.search-wrap input:focus { outline: none; border-color: #ff6b35; }
+.btn-search {
+    background: #1a1a2e;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: inherit;
+    white-space: nowrap;
+    transition: background .2s;
+}
+.btn-search:hover { background: #ff6b35; }
+.clear-link { color: #aaa; text-decoration: none; font-size: 13px; white-space: nowrap; align-self: center; }
+.clear-link:hover { color: #ff6b35; }
 
-    .badge {
-        background: #ff6b35;
-        color: white;
-        padding: 6px 18px;
-        border-radius: 20px;
-        font-size: 15px;
-        font-weight: 700;
-    }
+/* Date filter chips */
+.df-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.df-chip {
+    padding: 7px 14px;
+    border-radius: 20px;
+    border: 2px solid #e0e0e0;
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    background: white;
+    color: #555;
+    text-decoration: none;
+    transition: all .2s;
+    white-space: nowrap;
+}
+.df-chip:hover, .df-chip.active { background: #1a1a2e; color: white; border-color: #1a1a2e; }
 
-    .search-form {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 22px;
-    }
+/* ── Tab bar ── */
+.tab-bar {
+    display: flex;
+    gap: 0;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+    margin-bottom: 18px;
+    overflow-x: auto;
+    padding: 6px;
+}
+.tab-item {
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    text-decoration: none;
+    color: #555;
+    white-space: nowrap;
+    transition: all .2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.tab-item:hover { background: #f5f5f5; color: #1a1a2e; }
+.tab-item.active { background: #ff6b35; color: white; font-weight: 700; }
+.tab-badge {
+    background: rgba(0,0,0,0.12);
+    border-radius: 20px;
+    padding: 1px 7px;
+    font-size: 11px;
+    font-weight: 700;
+}
+.tab-item.active .tab-badge { background: rgba(255,255,255,0.25); }
 
-    .search-form input {
-        flex: 1;
-        padding: 11px 16px;
-        border: 2px solid #e0e0e0;
-        border-radius: 8px;
-        font-size: 15px;
-        font-family: inherit;
-        direction: rtl;
-        max-width: 300px;
-    }
+/* ── Table ── */
+.table-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+    overflow-x: auto;
+}
+table { width: 100%; border-collapse: collapse; direction: rtl; min-width: 800px; }
+thead { background: #1a1a2e; color: white; }
+thead th { padding: 13px 16px; text-align: right; font-size: 13px; white-space: nowrap; }
+tbody tr { border-bottom: 1px solid #f0f0f0; transition: background .15s; }
+tbody tr:hover { background: #fff8f5; }
+tbody tr:last-child { border-bottom: none; }
+tbody td { padding: 12px 16px; font-size: 13px; color: #333; vertical-align: top; }
 
-    .search-form input:focus { outline: none; border-color: #ff6b35; }
+.oid { font-weight: 800; color: #ff6b35; }
+.phone-link { color: #0066cc; text-decoration: none; font-weight: 600; }
+.phone-link:hover { text-decoration: underline; }
 
-    .search-form button {
-        background: #1a1a2e;
-        color: white;
-        border: none;
-        padding: 11px 22px;
-        border-radius: 8px;
-        font-size: 15px;
-        cursor: pointer;
-        font-family: inherit;
-        transition: background 0.2s;
-    }
+/* Products list in cell */
+.prod-list { list-style: none; padding: 0; margin: 0; }
+.prod-list li { display: flex; align-items: center; gap: 6px; padding: 3px 0; border-bottom: 1px dashed #f0f0f0; flex-wrap: wrap; }
+.prod-list li:last-child { border-bottom: none; }
+.pw-pill { background: #fff0e8; color: #ff6b35; padding: 2px 9px; border-radius: 20px; font-weight: 700; font-size: 12px; white-space: nowrap; }
+.qty-tag { background: #f0f0f0; color: #555; padding: 2px 7px; border-radius: 5px; font-size: 11px; }
+.sub-tag { color: #aaa; font-size: 11px; }
+.total-val { font-weight: 800; color: #1a1a2e; font-size: 14px; white-space: nowrap; }
 
-    .search-form button:hover { background: #ff6b35; }
-    .clear-btn { color: #888; text-decoration: none; font-size: 14px; padding: 11px 0; }
-    .clear-btn:hover { color: #ff6b35; }
+/* Status select */
+.st-form { display: flex; gap: 6px; align-items: center; }
+.st-sel {
+    padding: 6px 8px;
+    border: 2px solid #e0e0e0;
+    border-radius: 7px;
+    font-size: 12px;
+    font-family: inherit;
+    direction: rtl;
+    cursor: pointer;
+    background: white;
+    transition: border-color .2s;
+}
+.st-sel:focus { outline: none; border-color: #ff6b35; }
 
-    .table-wrap {
-        background: white;
-        border-radius: 14px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-        overflow-x: auto;
-    }
+/* Status colored dot */
+.st-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-left: 5px; }
+.dot-new    { background: #3b82f6; }
+.dot-call   { background: #f59e0b; }
+.dot-conf   { background: #10b981; }
+.dot-ship   { background: #8b5cf6; }
+.dot-recv   { background: #059669; }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        direction: rtl;
-        min-width: 800px;
-    }
+.empty-state { text-align: center; padding: 60px 20px; color: #aaa; font-size: 18px; }
 
-    thead { background: #1a1a2e; color: white; }
-
-    thead th {
-        padding: 14px 16px;
-        text-align: right;
-        font-size: 13px;
-        white-space: nowrap;
-    }
-
-    tbody tr { border-bottom: 1px solid #f0f0f0; transition: background 0.15s; }
-    tbody tr:hover { background: #fff8f5; }
-    tbody tr:last-child { border-bottom: none; }
-
-    tbody td {
-        padding: 13px 16px;
-        font-size: 13px;
-        color: #333;
-        vertical-align: top;
-    }
-
-    .oid { font-weight: 800; color: #ff6b35; font-size: 13px; }
-
-    /* Items list inside cell */
-    .items-list { list-style: none; padding: 0; margin: 0; }
-
-    .items-list li {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        padding: 3px 0;
-        font-size: 12px;
-        color: #333;
-        border-bottom: 1px dashed #f0f0f0;
-    }
-
-    .items-list li:last-child { border-bottom: none; }
-
-    .power-pill {
-        background: #fff0e8;
-        color: #ff6b35;
-        padding: 2px 9px;
-        border-radius: 20px;
-        font-weight: 700;
-        font-size: 12px;
-        white-space: nowrap;
-    }
-
-    .qty-tag {
-        background: #f0f0f0;
-        color: #555;
-        padding: 2px 7px;
-        border-radius: 5px;
-        font-size: 11px;
-    }
-
-    .subtotal-tag { color: #aaa; font-size: 11px; }
-
-    .total-val { font-weight: 800; color: #1a1a2e; font-size: 14px; }
-
-    .status-form { display: flex; gap: 6px; align-items: center; }
-
-    .status-select {
-        padding: 5px 8px;
-        border: 2px solid #e0e0e0;
-        border-radius: 6px;
-        font-size: 12px;
-        font-family: inherit;
-        direction: rtl;
-        cursor: pointer;
-    }
-
-    .status-select:focus { outline: none; border-color: #ff6b35; }
-
-    .phone-link { color: #0066cc; text-decoration: none; font-weight: 600; }
-    .phone-link:hover { text-decoration: underline; }
-
-    .empty-state { text-align: center; padding: 60px 20px; color: #aaa; font-size: 18px; }
+@media (max-width: 600px) {
+    .stat-row { grid-template-columns: repeat(3, 1fr); }
+    .toolbar { flex-direction: column; }
+}
 </style>
 
-<div class="admin-wrapper">
+<div class="dash">
 
-    <div class="admin-top">
-        <h2>📊 لوحة إدارة الطلبات</h2>
-        <span class="badge">إجمالي الطلبات: {{ orders|length }}</span>
+    <!-- Stat cards -->
+    <div class="stat-row">
+        <a href="{{ url_for('admin', tab='all', q=search, df=date_filter) }}" class="stat-card {% if tab=='all' %}active{% endif %}">
+            <span class="sc-label">📦 إجمالي الطلبات</span>
+            <span class="sc-val">{{ counts.all }}</span>
+        </a>
+        <a href="{{ url_for('admin', tab='جديد', q=search, df=date_filter) }}" class="stat-card s-new {% if tab=='جديد' %}active{% endif %}">
+            <span class="sc-label">🆕 جديد</span>
+            <span class="sc-val">{{ counts['جديد'] }}</span>
+        </a>
+        <a href="{{ url_for('admin', tab='تم الاتصال', q=search, df=date_filter) }}" class="stat-card {% if tab=='تم الاتصال' %}active{% endif %}">
+            <span class="sc-label">📞 تم الاتصال</span>
+            <span class="sc-val">{{ counts['تم الاتصال'] }}</span>
+        </a>
+        <a href="{{ url_for('admin', tab='تم التأكيد', q=search, df=date_filter) }}" class="stat-card {% if tab=='تم التأكيد' %}active{% endif %}">
+            <span class="sc-label">✅ تم التأكيد</span>
+            <span class="sc-val">{{ counts['تم التأكيد'] }}</span>
+        </a>
+        <a href="{{ url_for('admin', tab='تم الشحن', q=search, df=date_filter) }}" class="stat-card s-ship {% if tab=='تم الشحن' %}active{% endif %}">
+            <span class="sc-label">🚚 تم الشحن</span>
+            <span class="sc-val">{{ counts['تم الشحن'] }}</span>
+        </a>
+        <a href="{{ url_for('admin', tab='تم الاستلام', q=search, df=date_filter) }}" class="stat-card s-done {% if tab=='تم الاستلام' %}active{% endif %}">
+            <span class="sc-label">🏁 تم الاستلام</span>
+            <span class="sc-val">{{ counts['تم الاستلام'] }}</span>
+        </a>
+        <a href="{{ url_for('admin', tab='old', q=search, df=date_filter) }}" class="stat-card s-old {% if tab=='old' %}active{% endif %}">
+            <span class="sc-label">🕒 طلبات قديمة</span>
+            <span class="sc-val">{{ counts.old }}</span>
+        </a>
     </div>
 
-    <form class="search-form" method="GET" action="/admin">
-        <input type="text" name="q" placeholder="ابحث برقم الطلب... (مثال: ORD-1001)"
-               value="{{ search }}" autocomplete="off">
-        <button type="submit">🔍 بحث</button>
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <form class="search-wrap" method="GET" action="{{ url_for('admin') }}">
+            <input type="hidden" name="tab" value="{{ tab }}">
+            <input type="hidden" name="df"  value="{{ date_filter }}">
+            <input type="text" name="q"
+                   placeholder="بحث: رقم الطلب، الاسم، الهاتف، الولاية..."
+                   value="{{ search }}" autocomplete="off">
+            <button type="submit" class="btn-search">🔍 بحث</button>
+        </form>
         {% if search %}
-        <a href="/admin" class="clear-btn">✕ إلغاء</a>
+        <a href="{{ url_for('admin', tab=tab, df=date_filter) }}" class="clear-link">✕ مسح البحث</a>
         {% endif %}
-    </form>
 
+        <div class="df-chips">
+            <a href="{{ url_for('admin', tab=tab, q=search) }}"
+               class="df-chip {% if not date_filter %}active{% endif %}">الكل</a>
+            <a href="{{ url_for('admin', tab=tab, q=search, df='today') }}"
+               class="df-chip {% if date_filter=='today' %}active{% endif %}">اليوم</a>
+            <a href="{{ url_for('admin', tab=tab, q=search, df='week') }}"
+               class="df-chip {% if date_filter=='week' %}active{% endif %}">هذا الأسبوع</a>
+            <a href="{{ url_for('admin', tab=tab, q=search, df='month') }}"
+               class="df-chip {% if date_filter=='month' %}active{% endif %}">هذا الشهر</a>
+        </div>
+    </div>
+
+    <!-- Tab bar -->
+    <div class="tab-bar">
+        <a href="{{ url_for('admin', q=search, df=date_filter, tab='all') }}"
+           class="tab-item {% if tab=='all' %}active{% endif %}">
+            الكل <span class="tab-badge">{{ counts.all }}</span>
+        </a>
+        {% for s in statuses %}
+        <a href="{{ url_for('admin', q=search, df=date_filter, tab=s) }}"
+           class="tab-item {% if tab==s %}active{% endif %}">
+            {{ s }} <span class="tab-badge">{{ counts[s] }}</span>
+        </a>
+        {% endfor %}
+        <a href="{{ url_for('admin', q=search, df=date_filter, tab='old') }}"
+           class="tab-item {% if tab=='old' %}active{% endif %}">
+            🕒 قديمة &gt;7 أيام <span class="tab-badge">{{ counts.old }}</span>
+        </a>
+    </div>
+
+    <!-- Orders table -->
     {% if orders %}
-    <div class="table-wrap">
+    <div class="table-card">
         <table>
             <thead>
                 <tr>
@@ -190,38 +282,39 @@
                 </tr>
             </thead>
             <tbody>
-                {% for order in orders %}
+                {% for o in orders %}
                 <tr>
-                    <td><span class="oid">{{ order.order_id }}</span></td>
-                    <td><strong>{{ order.name }}</strong></td>
-                    <td><a href="tel:{{ order.phone }}" class="phone-link">{{ order.phone }}</a></td>
-                    <td>{{ order.wilaya }}</td>
+                    <td><span class="oid">{{ o.order_id }}</span></td>
+                    <td><strong>{{ o.name }}</strong></td>
+                    <td><a href="tel:{{ o.phone }}" class="phone-link">{{ o.phone }}</a></td>
+                    <td>{{ o.wilaya }}</td>
                     <td>
-                        {% if order.products %}
-                        <ul class="items-list">
-                            {% for p in order.products %}
+                        {% if o.products %}
+                        <ul class="prod-list">
+                            {% for p in o.products %}
                             <li>
-                                <span class="power-pill">{{ p.power }}</span>
+                                <span class="pw-pill">{{ p.power }}</span>
                                 <span class="qty-tag">× {{ p.quantity }}</span>
-                                <span class="subtotal-tag">{{ "{:,}".format(p.subtotal) }} دج</span>
+                                <span class="sub-tag">{{ "{:,}".format(p.subtotal) }} دج</span>
                             </li>
                             {% endfor %}
                         </ul>
-                        {% elif order.power %}
-                        <span class="power-pill">{{ order.power }}</span>
-                        <span class="qty-tag">× {{ order.quantity }}</span>
+                        {% elif o.power %}
+                        <span class="pw-pill">{{ o.power }}</span>
+                        <span class="qty-tag">× {{ o.quantity }}</span>
                         {% else %}
-                        <span style="color:#aaa;">—</span>
+                        <span style="color:#aaa">—</span>
                         {% endif %}
                     </td>
-                    <td><span class="total-val">{{ "{:,}".format(order.total) }} دج</span></td>
-                    <td style="white-space:nowrap;">{{ order.date }}</td>
+                    <td><span class="total-val">{{ "{:,}".format(o.total) }} دج</span></td>
+                    <td style="white-space:nowrap; color:#888; font-size:12px;">{{ o.date }}</td>
                     <td>
-                        <form class="status-form" method="POST" action="/admin/update-status">
-                            <input type="hidden" name="order_id" value="{{ order.order_id }}">
-                            <select name="status" class="status-select" onchange="this.form.submit()">
+                        <form class="st-form" method="POST" action="{{ url_for('update_status') }}">
+                            <input type="hidden" name="order_id" value="{{ o.order_id }}">
+                            <input type="hidden" name="tab" value="{{ tab }}">
+                            <select name="status" class="st-sel" onchange="this.form.submit()">
                                 {% for s in statuses %}
-                                <option value="{{ s }}" {% if order.status == s %}selected{% endif %}>{{ s }}</option>
+                                <option value="{{ s }}" {% if o.status == s %}selected{% endif %}>{{ s }}</option>
                                 {% endfor %}
                             </select>
                         </form>
@@ -235,6 +328,10 @@
     <div class="empty-state">
         {% if search %}
         🔍 لا توجد نتائج للبحث عن "<strong>{{ search }}</strong>"
+        {% elif tab == 'old' %}
+        🕒 لا توجد طلبات مضى عليها أكثر من 7 أيام
+        {% elif tab != 'all' %}
+        📭 لا توجد طلبات بحالة "<strong>{{ tab }}</strong>"
         {% else %}
         📭 لا توجد طلبات حتى الآن
         {% endif %}
