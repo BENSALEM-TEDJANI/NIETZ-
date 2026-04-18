@@ -197,9 +197,9 @@
                     <td><a href="tel:{{ order.phone }}" class="phone-link">{{ order.phone }}</a></td>
                     <td>{{ order.wilaya }}</td>
                     <td>
-                        {% if order.items is defined %}
+                        {% if 'items' in order %}
                         <ul class="items-list">
-                            {% for item in order.items %}
+                            {% for item in order['items'] %}
                             <li>
                                 <span class="power-pill">{{ item.power }}</span>
                                 <span class="qty-tag">× {{ item.quantity }}</span>
