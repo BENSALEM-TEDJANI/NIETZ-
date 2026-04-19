@@ -25,11 +25,24 @@
         }
 
         header .logo {
-            font-size: 22px;
-            font-weight: 700;
-            color: #ff6b35;
-            letter-spacing: 1px;
             text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        header .logo-img-wrap {
+            background: white;
+            border-radius: 8px;
+            padding: 5px 12px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        header .logo-img-wrap img {
+            height: 34px;
+            width: auto;
+            display: block;
         }
 
         header nav { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
@@ -72,19 +85,19 @@
             font-weight: 700;
         }
 
-        .role-admin    { background: #ff6b35; color: white; }
+        .role-admin    { background: #cc1a1a; color: white; }
         .role-employee { background: #0077cc; color: white; }
 
         .logout-btn {
-            background: rgba(255,107,53,0.15);
-            border: 1px solid rgba(255,107,53,0.4);
-            color: #ff6b35 !important;
+            background: rgba(204,26,26,0.15);
+            border: 1px solid rgba(204,26,26,0.4);
+            color: #cc1a1a !important;
             padding: 6px 14px !important;
             border-radius: 6px;
             font-size: 13px !important;
         }
 
-        .logout-btn:hover { background: rgba(255,107,53,0.3) !important; }
+        .logout-btn:hover { background: rgba(204,26,26,0.3) !important; }
 
         .flash-messages { padding: 0 24px; margin-top: 12px; }
 
@@ -113,7 +126,7 @@
         }
 
         .btn-primary {
-            background-color: #ff6b35;
+            background-color: #cc1a1a;
             color: white;
             border: none;
             padding: 14px 36px;
@@ -127,7 +140,7 @@
             display: inline-block;
         }
 
-        .btn-primary:hover { background-color: #e55a25; transform: translateY(-1px); }
+        .btn-primary:hover { background-color: #b31616; transform: translateY(-1px); }
         .btn-primary:active { transform: translateY(0); }
 
         @media (max-width: 600px) {
@@ -137,7 +150,11 @@
 </head>
 <body>
     <header>
-        <a href="/" class="logo">⚡ NIETZ</a>
+        <a href="/" class="logo">
+            <div class="logo-img-wrap">
+                <img src="/static/images/nietz-logo.png" alt="NIETZ">
+            </div>
+        </a>
         <nav>
             <a href="/">الرئيسية</a>
             <a href="/products">المنتجات</a>

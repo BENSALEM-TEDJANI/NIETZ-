@@ -19,19 +19,24 @@
         box-shadow: 0 10px 40px rgba(0,0,0,0.12);
         width: 100%;
         max-width: 420px;
-        border-top: 5px solid #ff6b35;
+        border-top: 5px solid #cc1a1a;
     }
 
     .login-logo {
         text-align: center;
-        font-size: 36px;
-        font-weight: 900;
-        color: #ff6b35;
-        letter-spacing: 2px;
-        margin-bottom: 6px;
+        margin-bottom: 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
     }
 
-    .login-logo span { color: #1a1a2e; font-size: 18px; display: block; font-weight: 400; margin-top: 4px; }
+    .login-logo img {
+        height: 44px;
+        width: auto;
+    }
+
+    .login-logo span { color: #888; font-size: 14px; display: block; font-weight: 400; }
 
     .login-card h2 {
         text-align: center;
@@ -64,7 +69,7 @@
 
     .form-group input:focus {
         outline: none;
-        border-color: #ff6b35;
+        border-color: #cc1a1a;
     }
 
     .error-box {
@@ -100,7 +105,7 @@
 <div class="login-wrapper">
     <div class="login-card">
         <div class="login-logo">
-            ⚡ NIETZ
+            <img src="/static/images/nietz-logo.png" alt="NIETZ">
             <span>لوحة التحكم</span>
         </div>
         <h2>تسجيل الدخول</h2>
