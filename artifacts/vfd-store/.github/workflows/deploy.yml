@@ -16,6 +16,7 @@ jobs:
           key: ${{ secrets.HETZNER_SSH_KEY }}
           script: |
             cd /var/www/nietz
+            git checkout -- artifacts/vfd-store/nietz.db 2>/dev/null || true
             git pull origin main
             cd artifacts/vfd-store
             source venv/bin/activate
