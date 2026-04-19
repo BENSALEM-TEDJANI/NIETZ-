@@ -29,7 +29,7 @@ outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "cd artifacts/vfd-store && PORT=5000 python app.py"
+args = "cd artifacts/vfd-store && python app.py"
 waitForPort = 5000
 
 [agent]
