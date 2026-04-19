@@ -274,7 +274,7 @@ tbody td { padding: 12px 16px; font-size: 13px; color: #333; vertical-align: top
                     <th>رقم الطلب</th>
                     <th>الاسم</th>
                     <th>الهاتف</th>
-                    <th>الولاية</th>
+                    <th>الولاية / البلدية</th>
                     <th>المنتجات</th>
                     <th>المجموع</th>
                     <th>التاريخ</th>
@@ -287,7 +287,12 @@ tbody td { padding: 12px 16px; font-size: 13px; color: #333; vertical-align: top
                     <td><span class="oid">{{ o.order_id }}</span></td>
                     <td><strong>{{ o.name }}</strong></td>
                     <td><a href="tel:{{ o.phone }}" class="phone-link">{{ o.phone }}</a></td>
-                    <td>{{ o.wilaya }}</td>
+                    <td>
+                        {{ o.wilaya }}
+                        {% if o.commune %}
+                        <br><span style="font-size:12px;color:#888;">{{ o.commune }}</span>
+                        {% endif %}
+                    </td>
                     <td>
                         {% if o.products %}
                         <ul class="prod-list">

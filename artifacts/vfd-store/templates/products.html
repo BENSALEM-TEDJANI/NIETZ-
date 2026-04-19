@@ -4,9 +4,9 @@
 {% block content %}
 <style>
 .prods-wrap {
-    max-width: 900px;
+    max-width: 960px;
     margin: 40px auto;
-    padding: 0 20px 60px;
+    padding: 0 20px 80px;
 }
 
 .prods-hero {
@@ -30,7 +30,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 16px;
-    margin-bottom: 48px;
+    margin-bottom: 40px;
 }
 
 .prod-card {
@@ -45,12 +45,20 @@
     border: 2px solid transparent;
     transition: border-color .2s, transform .15s, box-shadow .2s;
     text-align: center;
+    cursor: pointer;
+    user-select: none;
 }
 
 .prod-card:hover {
     border-color: #ff6b35;
     transform: translateY(-3px);
     box-shadow: 0 8px 24px rgba(255,107,53,0.15);
+}
+
+.prod-card.selected {
+    border-color: #ff6b35;
+    background: #fff8f5;
+    box-shadow: 0 8px 28px rgba(255,107,53,0.2);
 }
 
 .prod-icon {
@@ -62,6 +70,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.prod-card.selected .prod-icon {
+    background: #ff6b35;
 }
 
 .prod-label {
@@ -90,48 +102,214 @@
     color: #aaa;
 }
 
-/* CTA section */
-.cta-box {
-    background: linear-gradient(135deg, #1a1a2e 60%, #2d2d5e);
-    border-radius: 18px;
-    padding: 40px 30px;
+.select-hint {
+    font-size: 12px;
+    color: #bbb;
+}
+
+.prod-card.selected .select-hint {
+    color: #ff6b35;
+    font-weight: 600;
+}
+
+/* ── Inline Order Form ── */
+#orderSection {
+    display: none;
+    animation: fadeSlide 0.35s ease;
+}
+
+#orderSection.visible {
+    display: block;
+}
+
+@keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.order-card {
+    background: white;
+    border-radius: 16px;
+    padding: 36px 34px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    border-top: 5px solid #ff6b35;
+}
+
+.order-card h2 {
     text-align: center;
-    color: white;
-}
-
-.cta-box h2 {
     font-size: 24px;
-    margin-bottom: 10px;
+    margin-bottom: 6px;
+    color: #1a1a2e;
 }
 
-.cta-box p {
-    color: #aaa;
+.subtitle {
+    text-align: center;
+    color: #888;
+    margin-bottom: 28px;
+    font-size: 14px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.form-group { margin-bottom: 18px; }
+
+.form-group label {
+    display: block;
+    margin-bottom: 7px;
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+}
+
+.form-group label span { color: #ff6b35; }
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 11px 14px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
     font-size: 15px;
-    margin-bottom: 26px;
-}
-
-.btn-cta {
-    display: inline-block;
-    background: #ff6b35;
-    color: white;
-    text-decoration: none;
-    padding: 16px 44px;
-    border-radius: 10px;
-    font-size: 18px;
-    font-weight: 700;
     font-family: inherit;
-    transition: background .2s, transform .15s;
+    color: #333;
+    direction: rtl;
+    background: #fafafa;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
 }
 
-.btn-cta:hover {
-    background: #e55a25;
-    transform: translateY(-2px);
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #ff6b35;
+    background: white;
 }
 
-@media (max-width: 480px) {
+/* Cart */
+.cart-label {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cart-items { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; }
+
+.cart-row {
+    display: grid;
+    grid-template-columns: 1fr 100px 40px;
+    gap: 10px;
+    align-items: center;
+    background: #fafafa;
+    border: 2px solid #e8e8e8;
+    border-radius: 10px;
+    padding: 12px 14px;
+    transition: border-color 0.2s;
+}
+
+.cart-row:hover { border-color: #ff6b35; }
+
+.cart-row select,
+.cart-row input[type="number"] {
+    border: 2px solid #e0e0e0;
+    border-radius: 7px;
+    padding: 9px 10px;
+    font-size: 14px;
+    font-family: inherit;
+    direction: rtl;
+    background: white;
+    width: 100%;
+    transition: border-color 0.2s;
+}
+
+.cart-row select:focus,
+.cart-row input[type="number"]:focus {
+    outline: none;
+    border-color: #ff6b35;
+}
+
+.delete-btn {
+    background: #fef2f2;
+    border: 2px solid #fca5a5;
+    color: #dc2626;
+    border-radius: 7px;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    flex-shrink: 0;
+}
+
+.delete-btn:hover { background: #fee2e2; }
+
+.add-row-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f0f9ff;
+    border: 2px dashed #93c5fd;
+    color: #0077cc;
+    border-radius: 10px;
+    padding: 11px 18px;
+    font-size: 14px;
+    font-family: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    justify-content: center;
+    transition: background 0.2s, border-color 0.2s;
+    margin-bottom: 18px;
+}
+
+.add-row-btn:hover { background: #e0f2fe; border-color: #3b82f6; }
+
+.total-box {
+    background: #fff8f5;
+    border: 2px solid #ff6b35;
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.total-box .tl { color: #555; font-size: 15px; font-weight: 600; }
+.total-box .ta { font-size: 22px; font-weight: 900; color: #ff6b35; }
+
+.submit-btn {
+    width: 100%;
+    padding: 15px;
+    font-size: 17px;
+    border-radius: 10px;
+}
+
+.row-subtitle {
+    font-size: 12px;
+    color: #aaa;
+    margin-top: 3px;
+}
+
+.commune-group { display: none; }
+.commune-group.visible { display: block; }
+
+@media (max-width: 600px) {
     .prod-grid { grid-template-columns: repeat(2, 1fr); }
     .prods-hero h1 { font-size: 22px; }
-    .cta-box h2 { font-size: 20px; }
+    .order-card { padding: 24px 16px; }
+    .cart-row { grid-template-columns: 1fr 80px 36px; }
+    .form-row { grid-template-columns: 1fr; }
 }
 </style>
 
@@ -139,27 +317,207 @@
 
     <div class="prods-hero">
         <h1>⚡ قائمة أسعار NIETZ Inverter</h1>
-        <p>اختر القدرة المناسبة لاحتياجاتك — توصيل لجميع ولايات الجزائر</p>
+        <p>اضغط على القدرة التي تريدها لإرسال طلبك مباشرة</p>
     </div>
 
     <div class="prod-grid">
         {% for p in products %}
-        <div class="prod-card">
+        <div class="prod-card" onclick="selectProduct('{{ p.label }}', {{ p.price }})" data-label="{{ p.label }}">
             <div class="prod-icon">⚡</div>
             <div class="prod-label">{{ p.label }}</div>
             <div class="prod-divider"></div>
             <div class="prod-price">
                 {{ "{:,}".format(p.price) }}<span> دج</span>
             </div>
+            <div class="select-hint">اضغط للطلب</div>
         </div>
         {% endfor %}
     </div>
 
-    <div class="cta-box">
-        <h2>🛒 هل أنت مستعد للطلب؟</h2>
-        <p>يمكنك طلب عدة قدرات في نفس الطلب — سنتصل بك في أقرب وقت</p>
-        <a href="/order" class="btn-cta">اشترِ الآن ←</a>
+    <!-- Inline Order Form -->
+    <div id="orderSection">
+        <div class="order-card">
+            <h2>🛒 نموذج الطلب</h2>
+            <p class="subtitle" id="orderSubtitle">أكمل بياناتك وسنتصل بك قريباً</p>
+
+            <form method="POST" action="/order" id="orderForm">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">الاسم الكامل <span>*</span></label>
+                        <input type="text" id="name" name="name" required minlength="3" placeholder="مثال: محمد أمين">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">رقم الهاتف <span>*</span></label>
+                        <input type="tel" id="phone" name="phone" placeholder="0555 123 456" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="wilaya">الولاية <span>*</span></label>
+                        <select id="wilaya" name="wilaya" required onchange="updateCommunes()">
+                            <option value="" disabled selected>-- اختر ولايتك --</option>
+                            {% for w in wilayas %}
+                            <option value="{{ w }}">{{ w }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group commune-group" id="communeGroup">
+                        <label for="commune">البلدية <span>*</span></label>
+                        <select id="commune" name="commune">
+                            <option value="" disabled selected>-- اختر بلديتك --</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="cart-label">⚡ القدرات المطلوبة <span style="color:#aaa;font-weight:400;font-size:13px;">— يمكنك إضافة أكثر من قدرة</span></div>
+
+                <div class="cart-items" id="cartItems"></div>
+
+                <button type="button" class="add-row-btn" onclick="addRow()">
+                    ➕ إضافة قدرة أخرى
+                </button>
+
+                <div class="total-box">
+                    <span class="tl">المجموع الإجمالي:</span>
+                    <span class="ta" id="grandTotal">—</span>
+                </div>
+
+                <button type="submit" class="btn-primary submit-btn" onclick="return validateCart()">
+                    ✅ إرسال الطلب
+                </button>
+            </form>
+        </div>
     </div>
 
 </div>
+
+<script>
+const PRICES = {
+    {% for p in products %}
+    "{{ p.label }}": {{ p.price }},
+    {% endfor %}
+};
+
+const OPTIONS_HTML = `
+    <option value="" disabled selected>-- اختر القدرة --</option>
+    {% for p in products %}
+    <option value="{{ p.label }}">{{ p.label }}</option>
+    {% endfor %}
+`;
+
+const COMMUNES = {{ communes_json | safe }};
+
+function selectProduct(label, price) {
+    // Highlight selected card
+    document.querySelectorAll(".prod-card").forEach(c => c.classList.remove("selected"));
+    const card = document.querySelector(`.prod-card[data-label="${label}"]`);
+    if (card) card.classList.add("selected");
+
+    // Show order section
+    const section = document.getElementById("orderSection");
+    section.classList.add("visible");
+
+    // Update subtitle
+    document.getElementById("orderSubtitle").textContent =
+        `المنتج المختار: ${label} — ${price.toLocaleString("ar-DZ")} دج`;
+
+    // Set the first cart row to the selected product
+    const cartItems = document.getElementById("cartItems");
+    cartItems.innerHTML = "";
+    addRow(label);
+
+    // Scroll to form
+    setTimeout(() => {
+        section.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 50);
+}
+
+function addRow(power = "", qty = 1) {
+    const id = "sub_" + Date.now();
+    const row = document.createElement("div");
+    row.className = "cart-row";
+    row.innerHTML = `
+        <div>
+            <select name="power[]" onchange="recalc()" required>
+                ${OPTIONS_HTML}
+            </select>
+            <div class="row-subtitle" id="${id}"></div>
+        </div>
+        <input type="number" name="qty[]" value="${qty}" min="1" max="99" onchange="recalc()">
+        <button type="button" class="delete-btn" onclick="removeRow(this)" title="حذف">✕</button>
+    `;
+    document.getElementById("cartItems").appendChild(row);
+    if (power) {
+        row.querySelector("select").value = power;
+    }
+    recalc();
+}
+
+function removeRow(btn) {
+    const rows = document.querySelectorAll(".cart-row");
+    if (rows.length <= 1) return;
+    btn.closest(".cart-row").remove();
+    recalc();
+}
+
+function recalc() {
+    const rows = document.querySelectorAll(".cart-row");
+    let grand = 0;
+    let hasItem = false;
+
+    rows.forEach(row => {
+        const sel   = row.querySelector("select");
+        const qtyEl = row.querySelector("input[type='number']");
+        const sub   = row.querySelector(".row-subtitle");
+        const pw    = sel ? sel.value : "";
+        const qty   = qtyEl ? parseInt(qtyEl.value) || 1 : 1;
+
+        if (pw && PRICES[pw]) {
+            const st = PRICES[pw] * qty;
+            grand   += st;
+            hasItem  = true;
+            if (sub) sub.textContent = `${PRICES[pw].toLocaleString("ar-DZ")} دج × ${qty} = ${st.toLocaleString("ar-DZ")} دج`;
+        } else {
+            if (sub) sub.textContent = "";
+        }
+    });
+
+    document.getElementById("grandTotal").textContent =
+        hasItem ? grand.toLocaleString("ar-DZ") + " دج" : "—";
+}
+
+function updateCommunes() {
+    const wilaya = document.getElementById("wilaya").value;
+    const communeGroup = document.getElementById("communeGroup");
+    const communeSelect = document.getElementById("commune");
+
+    communeSelect.innerHTML = '<option value="" disabled selected>-- اختر بلديتك --</option>';
+
+    if (wilaya && COMMUNES[wilaya]) {
+        COMMUNES[wilaya].forEach(c => {
+            const opt = document.createElement("option");
+            opt.value = c;
+            opt.textContent = c;
+            communeSelect.appendChild(opt);
+        });
+        communeGroup.classList.add("visible");
+    } else {
+        communeGroup.classList.remove("visible");
+    }
+}
+
+function validateCart() {
+    const sels = document.querySelectorAll(".cart-row select");
+    for (const s of sels) {
+        if (!s.value) {
+            s.focus();
+            alert("يرجى اختيار القدرة لكل عنصر في السلة");
+            return false;
+        }
+    }
+    return true;
+}
+</script>
 {% endblock %}
