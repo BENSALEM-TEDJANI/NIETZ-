@@ -31,22 +31,11 @@
         gap: 8px;
     }
 
-    .login-logo .logo-icon {
-        height: 44px;
+    .login-logo img {
+        height: 52px;
         width: auto;
+        display: block;
     }
-
-    .login-logo .logo-text {
-        font-family: 'Arial Black', 'Arial Bold', Arial, sans-serif;
-        font-weight: 900;
-        font-size: 28px;
-        color: #0d1b2a;
-        letter-spacing: 2px;
-        direction: ltr;
-        unicode-bidi: isolate;
-    }
-
-    .login-logo { direction: ltr; }
 
     .login-logo span { color: #888; font-size: 14px; display: block; font-weight: 400; }
 
@@ -117,14 +106,8 @@
 <div class="login-wrapper">
     <div class="login-card">
         <div class="login-logo">
-            <div style="display:flex;align-items:center;gap:8px;direction:ltr">
-                <svg class="logo-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 46" aria-hidden="true">
-                    <polygon points="2,4 15,4 26,23 15,42 2,42 13,23" fill="#cc1a1a"/>
-                    <polygon points="17,4 30,4 41,23 30,42 17,42 28,23" fill="#cc1a1a"/>
-                </svg>
-                <span class="logo-text">NIETZ</span>
-            </div>
-            <span style="color:#888;font-size:14px;font-weight:400;">لوحة التحكم</span>
+            <img src="/static/images/nietz-logo-transparent.png" alt="NIETZ">
+            <span>لوحة التحكم</span>
         </div>
         <h2>تسجيل الدخول</h2>
 
