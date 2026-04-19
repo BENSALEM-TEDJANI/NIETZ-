@@ -10,10 +10,6 @@ app.secret_key = os.environ.get("SESSION_SECRET", "nietz-secret-key-2025")
 
 DB_PATH = os.path.join(os.path.dirname(__file__), "nietz.db")
 
-# ─── In-memory orders ────────────────────────────────────────────────────────
-orders = []
-order_counter = 1001
-
 STATUSES = ["جديد", "تم الاتصال", "تم التأكيد", "تم الشحن", "تم الاستلام"]
 
 DEFAULT_PRODUCTS = [
@@ -47,7 +43,7 @@ WILAYAS = [
     "مقرة", "عين أزال", "تبلبالة", "سيدي خالد", "السوقر", "عين فكرون"
 ]
 
-# ─── Database helpers ─────────────────────────────────────────────────────────
+# ─── Database helpers ──────────────────────────────────────────────────────────
 def get_db():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
@@ -69,6 +65,29 @@ def init_db():
                 label      TEXT    UNIQUE NOT NULL,
                 price      INTEGER NOT NULL DEFAULT 0,
                 sort_order INTEGER NOT NULL DEFAULT 0
+            )
+        """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS orders (
+                id       INTEGER PRIMARY KEY AUTOINCREMENT,
+                order_id TEXT    UNIQUE NOT NULL,
+                name     TEXT    NOT NULL,
+                phone    TEXT    NOT NULL,
+                wilaya   TEXT    NOT NULL,
+                total    INTEGER NOT NULL DEFAULT 0,
+                date     TEXT    NOT NULL,
+                status   TEXT    NOT NULL DEFAULT 'جديد'
+            )
+        """)
+        conn.execute("""
+            CREATE TABLE IF NOT EXISTS order_items (
+                id         INTEGER PRIMARY KEY AUTOINCREMENT,
+                order_id   TEXT    NOT NULL,
+                power      TEXT    NOT NULL,
+                quantity   INTEGER NOT NULL DEFAULT 1,
+                unit_price INTEGER NOT NULL DEFAULT 0,
+                subtotal   INTEGER NOT NULL DEFAULT 0,
+                FOREIGN KEY (order_id) REFERENCES orders(order_id)
             )
         """)
         cur = conn.execute("SELECT COUNT(*) FROM users")
@@ -96,7 +115,97 @@ def get_products():
 def get_price_map():
     return {p["label"]: p["price"] for p in get_products()}
 
-# ─── Auth decorators ──────────────────────────────────────────────────────────
+# ─── Orders DB helpers ─────────────────────────────────────────────────────────
+def get_next_order_id():
+    with get_db() as conn:
+        row = conn.execute(
+            "SELECT order_id FROM orders ORDER BY id DESC LIMIT 1"
+        ).fetchone()
+    if row:
+        try:
+            last_num = int(row["order_id"].replace("ORD-", ""))
+            return f"ORD-{last_num + 1}"
+        except (ValueError, AttributeError):
+            pass
+    return "ORD-1001"
+
+def create_order(name, phone, wilaya, items, total):
+    order_id = get_next_order_id()
+    date_str = datetime.now().strftime("%Y-%m-%d %H:%M")
+    with get_db() as conn:
+        conn.execute(
+            "INSERT INTO orders (order_id, name, phone, wilaya, total, date, status) VALUES (?,?,?,?,?,?,?)",
+            (order_id, name, phone, wilaya, total, date_str, "جديد")
+        )
+        for item in items:
+            conn.execute(
+                "INSERT INTO order_items (order_id, power, quantity, unit_price, subtotal) VALUES (?,?,?,?,?)",
+                (order_id, item["power"], item["quantity"], item["unit_price"], item["subtotal"])
+            )
+        conn.commit()
+    return order_id
+
+def _row_to_order(row, items_rows):
+    return {
+        "order_id": row["order_id"],
+        "name":     row["name"],
+        "phone":    row["phone"],
+        "wilaya":   row["wilaya"],
+        "total":    row["total"],
+        "date":     row["date"],
+        "status":   row["status"],
+        "products": [
+            {
+                "power":      r["power"],
+                "quantity":   r["quantity"],
+                "unit_price": r["unit_price"],
+                "subtotal":   r["subtotal"],
+            }
+            for r in items_rows
+        ],
+    }
+
+def get_all_orders():
+    with get_db() as conn:
+        order_rows = conn.execute(
+            "SELECT * FROM orders ORDER BY id DESC"
+        ).fetchall()
+        items_map = {}
+        if order_rows:
+            placeholders = ",".join("?" for _ in order_rows)
+            ids = [r["order_id"] for r in order_rows]
+            item_rows = conn.execute(
+                f"SELECT * FROM order_items WHERE order_id IN ({placeholders})",
+                ids
+            ).fetchall()
+            for ir in item_rows:
+                items_map.setdefault(ir["order_id"], []).append(ir)
+    return [_row_to_order(r, items_map.get(r["order_id"], [])) for r in order_rows]
+
+def update_order_status_db(order_id, new_status):
+    with get_db() as conn:
+        conn.execute(
+            "UPDATE orders SET status=? WHERE order_id=?",
+            (new_status, order_id)
+        )
+        conn.commit()
+
+def get_order_counts():
+    now = datetime.now()
+    old_cutoff = (now - timedelta(days=7)).strftime("%Y-%m-%d %H:%M")
+    with get_db() as conn:
+        total = conn.execute("SELECT COUNT(*) FROM orders").fetchone()[0]
+        old   = conn.execute(
+            "SELECT COUNT(*) FROM orders WHERE date < ?", (old_cutoff,)
+        ).fetchone()[0]
+        counts = {"all": total, "old": old}
+        for s in STATUSES:
+            counts[s] = conn.execute(
+                "SELECT COUNT(*) FROM orders WHERE status=?", (s,)
+            ).fetchone()[0]
+    return counts
+
+# ─── Auth decorators ───────────────────────────────────────────────────────────
 def login_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -116,7 +225,7 @@ def admin_required(f):
         return f(*args, **kwargs)
     return decorated
 
-# ─── Public routes ────────────────────────────────────────────────────────────
+# ─── Public routes ─────────────────────────────────────────────────────────────
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -128,7 +237,6 @@ def products():
 
 @app.route("/order", methods=["GET", "POST"])
 def order():
-    global order_counter
     power_options = get_products()
     price_map     = {p["label"]: p["price"] for p in power_options}
 
@@ -160,18 +268,7 @@ def order():
                     "subtotal":   subtotal,
                 })
             if items:
-                order_id = f"ORD-{order_counter}"
-                order_counter += 1
-                orders.append({
-                    "order_id": order_id,
-                    "name":     name,
-                    "phone":    phone,
-                    "wilaya":   wilaya,
-                    "products": items,
-                    "total":    total,
-                    "date":     datetime.now().strftime("%Y-%m-%d %H:%M"),
-                    "status":   "جديد",
-                })
+                order_id = create_order(name, phone, wilaya, items, total)
                 return redirect(url_for("success", oid=order_id))
 
     return render_template("order.html", power_options=power_options, wilayas=WILAYAS)
@@ -180,7 +277,7 @@ def order():
 def success():
     return render_template("success.html", order_id=request.args.get("oid", ""))
 
-# ─── Auth routes ──────────────────────────────────────────────────────────────
+# ─── Auth routes ───────────────────────────────────────────────────────────────
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if "user_id" in session:
@@ -206,7 +303,7 @@ def logout():
     session.clear()
     return redirect(url_for("login"))
 
-# ─── Admin orders ─────────────────────────────────────────────────────────────
+# ─── Admin orders ──────────────────────────────────────────────────────────────
 @app.route("/admin")
 @app.route("/admin/orders")
 @login_required
@@ -223,7 +320,7 @@ def admin():
         except Exception:
             return now
 
-    result = list(reversed(orders))
+    result = get_all_orders()
 
     if q:
         result = [o for o in result if
@@ -248,10 +345,7 @@ def admin():
         month_ago = now - timedelta(days=30)
         result = [o for o in result if parse_date(o["date"]) >= month_ago]
 
-    counts = {"all": len(orders), "old": 0}
-    for s in STATUSES:
-        counts[s] = sum(1 for o in orders if o.get("status") == s)
-    counts["old"] = sum(1 for o in orders if parse_date(o["date"]) < old_cutoff)
+    counts = get_order_counts()
 
     return render_template(
         "admin.html",
@@ -271,20 +365,18 @@ def update_status():
     order_id   = request.form.get("order_id", "")
     new_status = request.form.get("status", "")
     tab        = request.form.get("tab", "all")
-    for o in orders:
-        if o["order_id"] == order_id:
-            o["status"] = new_status
-            break
+    if order_id and new_status in STATUSES:
+        update_order_status_db(order_id, new_status)
     return redirect(url_for("admin", tab=tab))
 
-# ─── Admin products ───────────────────────────────────────────────────────────
+# ─── Admin products ────────────────────────────────────────────────────────────
 @app.route("/admin/products")
 @admin_required
 def admin_products():
-    products = get_products()
+    prods = get_products()
     return render_template(
         "admin_products.html",
-        products=products,
+        products=prods,
         role=session.get("role"),
         username=session.get("username"),
     )
@@ -344,7 +436,7 @@ def delete_product(pid):
     flash("تم حذف المنتج بنجاح", "success")
     return redirect(url_for("admin_products"))
 
-# ─── Users management ─────────────────────────────────────────────────────────
+# ─── Users management ──────────────────────────────────────────────────────────
 @app.route("/admin/users")
 @admin_required
 def admin_users():
@@ -407,7 +499,7 @@ def delete_user(uid):
     flash("تم حذف المستخدم بنجاح", "success")
     return redirect(url_for("admin_users"))
 
-# ─── Run ──────────────────────────────────────────────────────────────────────
+# ─── Run ───────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     init_db()
     port = int(os.environ.get("PORT", 5000))
