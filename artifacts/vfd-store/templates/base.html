@@ -30,18 +30,11 @@
             align-items: center;
         }
 
-        header .logo-pill {
-            background: #ffffff;
-            border-radius: 8px;
-            padding: 6px 14px;
-            display: flex;
-            align-items: center;
-        }
-
-        header .logo-pill img {
-            height: 44px;
+        header .logo img {
+            height: 50px;
             width: auto;
             display: block;
+            filter: brightness(0) invert(1);
         }
 
         header nav { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
@@ -150,9 +143,7 @@
 <body>
     <header>
         <a href="/" class="logo" aria-label="NIETZ - الرئيسية">
-            <div class="logo-pill">
-                <img src="/static/images/nietz-logo-transparent.png" alt="NIETZ">
-            </div>
+            <img src="/static/images/nietz-logo-transparent.png" alt="NIETZ">
         </a>
         <nav>
             <a href="/">الرئيسية</a>
