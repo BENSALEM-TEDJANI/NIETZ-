@@ -34,6 +34,7 @@
             height: 38px;
             width: auto;
             display: block;
+            direction: ltr;
         }
 
         header nav { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
@@ -146,15 +147,16 @@
                 <!-- Red angular chevron accent — left side of logo -->
                 <polygon points="2,4 15,4 26,23 15,42 2,42 13,23" fill="#cc1a1a"/>
                 <polygon points="17,4 30,4 41,23 30,42 17,42 28,23" fill="#cc1a1a"/>
-                <!-- NIETZ wordmark in white (on dark header background) -->
-                <text x="48" y="33"
-                      font-family="'Arial Black','Arial Bold',Arial,sans-serif"
-                      font-weight="900"
-                      font-size="28"
-                      fill="#ffffff"
-                      letter-spacing="1.5"
-                      direction="ltr"
-                      unicode-bidi="bidi-override">NIETZ</text>
+                <!-- NIETZ wordmark — each letter at absolute x position to avoid RTL issues -->
+                <text font-family="'Arial Black','Arial Bold',Arial,sans-serif"
+                      font-weight="900" font-size="28" fill="#ffffff"
+                      style="direction:ltr;unicode-bidi:bidi-override">
+                    <tspan x="50"  y="33">N</tspan>
+                    <tspan x="71"  y="33">I</tspan>
+                    <tspan x="84"  y="33">E</tspan>
+                    <tspan x="104" y="33">T</tspan>
+                    <tspan x="123" y="33">Z</tspan>
+                </text>
             </svg>
         </a>
         <nav>
