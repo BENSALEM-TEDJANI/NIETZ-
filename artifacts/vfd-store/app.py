@@ -4,9 +4,31 @@ from datetime import datetime, timedelta
 from functools import wraps
 import sqlite3
 import os
+import urllib.request
+import urllib.parse
+import threading
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "nietz-secret-key-2025")
+
+WHATSAPP_PHONE  = os.environ.get("WHATSAPP_PHONE",  "213562617736")
+WHATSAPP_APIKEY = os.environ.get("WHATSAPP_APIKEY", "")
+
+def send_whatsapp(message: str):
+    if not WHATSAPP_APIKEY:
+        return
+    def _send():
+        try:
+            params = urllib.parse.urlencode({
+                "phone":  WHATSAPP_PHONE,
+                "text":   message,
+                "apikey": WHATSAPP_APIKEY,
+            })
+            url = f"https://api.callmebot.com/whatsapp.php?{params}"
+            urllib.request.urlopen(url, timeout=10)
+        except Exception:
+            pass
+    threading.Thread(target=_send, daemon=True).start()
 
 DB_PATH = os.path.join(os.path.dirname(__file__), "nietz.db")
 
@@ -347,6 +369,19 @@ def order():
             })
         if items:
             order_id = create_order(name, phone, wilaya, commune, items, total)
+            items_text = "\n".join(
+                f"  - {it['power']} x{it['quantity']} = {it['subtotal']:,} dz"
+                for it in items
+            )
+            msg = (
+                f"طلب جديد #{order_id}\n"
+                f"الاسم: {name}\n"
+                f"الهاتف: {phone}\n"
+                f"الولاية: {wilaya}" + (f" / {commune}" if commune else "") + "\n"
+                f"المنتجات:\n{items_text}\n"
+                f"الاجمالي: {total:,} دج"
+            )
+            send_whatsapp(msg)
             return redirect(url_for("success", oid=order_id))
 
     return redirect(url_for("products"))
