@@ -28,13 +28,26 @@
             text-decoration: none;
             display: flex;
             align-items: center;
+            gap: 8px;
+            direction: ltr;
         }
 
-        header .logo svg {
-            height: 38px;
+        header .logo .logo-icon {
+            height: 36px;
             width: auto;
             display: block;
+            flex-shrink: 0;
+        }
+
+        header .logo .logo-text {
+            font-family: 'Arial Black', 'Arial Bold', Arial, sans-serif;
+            font-weight: 900;
+            font-size: 26px;
+            color: #ffffff;
+            letter-spacing: 2px;
+            white-space: nowrap;
             direction: ltr;
+            unicode-bidi: isolate;
         }
 
         header nav { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
@@ -143,21 +156,13 @@
 <body>
     <header>
         <a href="/" class="logo" aria-label="NIETZ - الرئيسية">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 170 46" role="img" aria-label="NIETZ">
-                <!-- Red angular chevron accent — left side of logo -->
+            <!-- SVG: chevron accent shape only (no text, avoids RTL issues) -->
+            <svg class="logo-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 44 46" aria-hidden="true">
                 <polygon points="2,4 15,4 26,23 15,42 2,42 13,23" fill="#cc1a1a"/>
                 <polygon points="17,4 30,4 41,23 30,42 17,42 28,23" fill="#cc1a1a"/>
-                <!-- NIETZ wordmark — each letter at absolute x position to avoid RTL issues -->
-                <text font-family="'Arial Black','Arial Bold',Arial,sans-serif"
-                      font-weight="900" font-size="28" fill="#ffffff"
-                      style="direction:ltr;unicode-bidi:bidi-override">
-                    <tspan x="50"  y="33">N</tspan>
-                    <tspan x="71"  y="33">I</tspan>
-                    <tspan x="84"  y="33">E</tspan>
-                    <tspan x="104" y="33">T</tspan>
-                    <tspan x="123" y="33">Z</tspan>
-                </text>
             </svg>
+            <!-- HTML span: Latin text always renders LTR regardless of page direction -->
+            <span class="logo-text">NIETZ</span>
         </a>
         <nav>
             <a href="/">الرئيسية</a>
