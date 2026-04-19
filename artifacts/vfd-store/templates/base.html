@@ -30,30 +30,10 @@
             align-items: center;
         }
 
-        header .logo-img-wrap {
-            background: white;
-            border-radius: 8px;
-            padding: 5px 12px;
-            display: flex;
-            align-items: center;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-        }
-
-        header .logo-img-wrap img {
-            height: 34px;
+        header .logo svg {
+            height: 38px;
             width: auto;
             display: block;
-        }
-
-        header .logo-img-wrap .logo-svg {
-            height: 34px;
-            width: auto;
-            display: none;
-        }
-
-        @media print, (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-            header .logo-img-wrap img { display: none; }
-            header .logo-img-wrap .logo-svg { display: block; }
         }
 
         header nav { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
@@ -161,16 +141,19 @@
 </head>
 <body>
     <header>
-        <a href="/" class="logo">
-            <div class="logo-img-wrap">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 158 44" aria-label="NIETZ">
-                    <!-- Red angular chevron accent -->
-                    <polygon points="4,4 16,4 26,22 16,40 4,40 14,22" fill="#cc1a1a"/>
-                    <polygon points="18,4 30,4 40,22 30,40 18,40 28,22" fill="#cc1a1a"/>
-                    <!-- NIETZ bold text -->
-                    <text x="46" y="32" font-family="'Arial Black',Arial,sans-serif" font-weight="900" font-size="26" fill="#0d1b2a" letter-spacing="0.5">NIETZ</text>
-                </svg>
-            </div>
+        <a href="/" class="logo" aria-label="NIETZ - الرئيسية">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 170 46" role="img" aria-label="NIETZ">
+                <!-- Red angular chevron accent — left side of logo -->
+                <polygon points="2,4 15,4 26,23 15,42 2,42 13,23" fill="#cc1a1a"/>
+                <polygon points="17,4 30,4 41,23 30,42 17,42 28,23" fill="#cc1a1a"/>
+                <!-- NIETZ wordmark in white (on dark header background) -->
+                <text x="48" y="33"
+                      font-family="'Arial Black','Arial Bold',Arial,sans-serif"
+                      font-weight="900"
+                      font-size="28"
+                      fill="#ffffff"
+                      letter-spacing="1.5">NIETZ</text>
+            </svg>
         </a>
         <nav>
             <a href="/">الرئيسية</a>
