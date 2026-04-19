@@ -116,27 +116,16 @@ def get_price_map():
     return {p["label"]: p["price"] for p in get_products()}
 
 # ─── Orders DB helpers ─────────────────────────────────────────────────────────
-def get_next_order_id():
-    with get_db() as conn:
-        row = conn.execute(
-            "SELECT order_id FROM orders ORDER BY id DESC LIMIT 1"
-        ).fetchone()
-    if row:
-        try:
-            last_num = int(row["order_id"].replace("ORD-", ""))
-            return f"ORD-{last_num + 1}"
-        except (ValueError, AttributeError):
-            pass
-    return "ORD-1001"
-
 def create_order(name, phone, wilaya, items, total):
-    order_id = get_next_order_id()
     date_str = datetime.now().strftime("%Y-%m-%d %H:%M")
     with get_db() as conn:
-        conn.execute(
+        cur = conn.execute(
             "INSERT INTO orders (order_id, name, phone, wilaya, total, date, status) VALUES (?,?,?,?,?,?,?)",
-            (order_id, name, phone, wilaya, total, date_str, "جديد")
+            ("PENDING", name, phone, wilaya, total, date_str, "جديد")
         )
+        row_id = cur.lastrowid
+        order_id = f"ORD-{1000 + row_id}"
+        conn.execute("UPDATE orders SET order_id=? WHERE id=?", (order_id, row_id))
         for item in items:
             conn.execute(
                 "INSERT INTO order_items (order_id, power, quantity, unit_price, subtotal) VALUES (?,?,?,?,?)",
