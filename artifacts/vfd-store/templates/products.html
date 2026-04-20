@@ -10,18 +10,39 @@
 }
 
 .prods-hero {
-    text-align: center;
+    background-image: url('/static/images/nietz-hero-bg.jpg');
+    background-size: cover;
+    background-position: center 30%;
+    border-radius: 18px;
+    padding: 70px 30px;
     margin-bottom: 36px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.prods-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(10,10,30,0.72) 0%, rgba(26,26,46,0.60) 100%);
+    border-radius: 18px;
+}
+
+.prods-hero > * {
+    position: relative;
+    z-index: 1;
 }
 
 .prods-hero h1 {
-    font-size: 30px;
-    color: #1a1a2e;
+    font-size: 32px;
+    color: #ffffff;
     margin-bottom: 10px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.5);
 }
 
 .prods-hero p {
-    color: #777;
+    color: rgba(255,255,255,0.82);
     font-size: 16px;
 }
 
